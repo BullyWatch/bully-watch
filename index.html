@@ -6,17 +6,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
+      font-family: Arial, sans-serif;
       background: #0f172a;
       color: white;
     }
 
     header {
-      background: #1e293b;
-      padding: 20px;
       text-align: center;
+      padding: 30px;
+      background: #1e293b;
     }
 
     h1 {
@@ -29,12 +33,119 @@
       margin-top: 10px;
     }
 
-    section {
-      padding: 30px;
-      max-width: 900px;
-      margin: auto;
+    nav {
+      position: sticky;
+      top: 0;
+      background: #0f172a;
+      text-align: center;
+      padding: 12px;
+      border-bottom: 1px solid #1e293b;
     }
 
+    nav a {
+      color: white;
+      margin: 10px;
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
+    nav a:hover {
+      background: #38bdf8;
+      color: black;
+    }
+
+    section {
+      max-width: 900px;
+      margin: auto;
+      padding: 40px 20px;
+    }
+
+    .card {
+      background: #1e293b;
+      padding: 20px;
+      margin: 15px 0;
+      border-radius: 12px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: gray;
+      background: #0f172a;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>BullyWatch</h1>
+  <p class="tagline">Smart Wearable Anti-Bullying Alert System</p>
+</header>
+
+<nav>
+  <a href="#about">About</a>
+  <a href="#problem">Problem</a>
+  <a href="#how">How It Works</a>
+  <a href="#features">Features</a>
+  <a href="#purpose">Purpose</a>
+</nav>
+
+<section>
+
+  <div class="card" id="about">
+    <h2>📌 About the Project</h2>
+    <p>
+      BullyWatch is a smart wearable system designed to help students report bullying incidents quickly.
+      It connects a wearable device to an application that alerts nearby trusted users in real time.
+    </p>
+  </div>
+
+  <div class="card" id="problem">
+    <h2>⚠️ Problem</h2>
+    <p>
+      Many bullying victims cannot ask for help immediately due to fear .
+      Bystanders also often fail to respond because they are unaware of the situation
+    </p>
+  </div>
+
+  <div class="card" id="how">
+    <h2>⚙️ How It Works</h2>
+    <p>
+      1. User presses hidden button on wearable device<br>
+      2. Alert is sent to app<br>
+      3. Nearby users receive notification<br>
+      4. Help responds immediately (hopefully)
+    </p>
+  </div>
+
+  <div class="card" id="features">
+    <h2>🚀 Features</h2>
+    <ul>
+      <li>Hidden emergency button</li>
+      <li>Real-time alerts</li>
+      <li>GPS location</li>
+      <li>Silent activation</li>
+      <li>Teacher & guardian notifications</li>
+    </ul>
+  </div>
+
+  <div class="card" id="purpose">
+    <h2>🎯 Purpose</h2>
+    <p>
+      To improve school safety by using technology to create faster response for bullying incidents.
+    </p>
+  </div>
+
+</section>
+
+<footer>
+  BullyWatch Project © 2026
+</footer>
+
+</body>
+</html>
     .card {
       background: #1e293b;
       padding: 20px;
