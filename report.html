@@ -11,48 +11,24 @@
       background: linear-gradient(135deg, #dc2626, #f97316);
       color: white;
       text-align: center;
-      animation: fade 0.5s ease;
-    }
-
-    @keyframes fade {
-      from {opacity: 0;}
-      to {opacity: 1;}
     }
 
     .box {
-      padding: 100px 20px;
+      padding: 80px 20px;
     }
 
     .btn {
       background: white;
       color: black;
-      padding: 18px 25px;
+      padding: 18px 24px;
       border-radius: 16px;
-      text-decoration: none;
       font-weight: bold;
       display: inline-block;
-      animation: pulse 1.5s infinite;
+      cursor: pointer;
     }
 
-    @keyframes pulse {
-      0% {transform: scale(1);}
-      50% {transform: scale(1.05);}
-      100% {transform: scale(1);}
-    }
-
-    .nav {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      display: flex;
-      justify-content: space-around;
-      background: rgba(0,0,0,0.2);
-      padding: 10px;
-    }
-
-    .nav a {
-      color: white;
-      text-decoration: none;
+    .btn:hover {
+      transform: scale(1.05);
     }
   </style>
 </head>
@@ -66,19 +42,32 @@
 </script>
 
 <div class="box">
-  <h1>🚨 Emergency</h1>
-  <p>Press only when needed</p>
+  <h1>🚨 Emergency Report</h1>
+  <p>Smart reporting system</p>
 
-  <a class="btn" onclick="alert('Alert Sent (Demo Mode)')">
+  <div class="btn" onclick="sendReport()">
     SEND ALERT
-  </a>
+  </div>
 </div>
 
-<div class="nav">
-  <a href="dashboard.html">Home</a>
-  <a href="about.html">About</a>
-  <a href="report.html">Report</a>
-</div>
+<script>
+function sendReport() {
+  const user = localStorage.getItem("user") || "Unknown";
+
+  const report = {
+    user: user,
+    time: new Date().toLocaleString(),
+    location: "School Campus (Simulated)",
+    status: "Active Alert"
+  };
+
+  let logs = JSON.parse(localStorage.getItem("reports") || "[]");
+  logs.unshift(report);
+  localStorage.setItem("reports", JSON.stringify(logs));
+
+  alert("🚨 Alert Sent Successfully!");
+}
+</script>
 
 </body>
 </html>
