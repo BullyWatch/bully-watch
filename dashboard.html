@@ -3,9 +3,34 @@
 <head>
   <title>Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin:0;
+      font-family:Arial;
+      background:#0f172a;
+      color:white;
+    }
+
+    .box {
+      text-align:center;
+      padding:40px;
+    }
+
+    a {
+      display:block;
+      margin:10px;
+      color:#38bdf8;
+      text-decoration:none;
+    }
+
+    a:hover {
+      color:white;
+    }
+  </style>
 </head>
 
-<body style="margin:0;font-family:Arial;background:#0f172a;color:white;">
+<body>
 
 <script>
   if (!localStorage.getItem("loggedIn")) {
@@ -13,26 +38,23 @@
   }
 </script>
 
-<div style="padding:20px;text-align:center;">
+  <div class="box">
 
-  <h1>📱 Dashboard</h1>
+    <h1>📱 Dashboard</h1>
 
-  <p>Welcome, <span id="u"></span></p>
+    <p>Welcome, <span id="user"></span></p>
 
-  <script>
-    document.getElementById("u").innerText = localStorage.getItem("user");
-  </script>
+    <script>
+      document.getElementById("user").innerText =
+        localStorage.getItem("user");
+    </script>
 
-  <br>
+    <a href="report.html">🚨 Report Emergency</a>
+    <a href="about.html">📘 About Project</a>
 
-  <a href="report.html" style="display:block;margin:10px;color:#38bdf8;">🚨 Report Emergency</a>
-  <a href="about.html" style="display:block;margin:10px;color:#38bdf8;">📘 About</a>
+    <a href="index.html" onclick="localStorage.clear()">🚪 Logout</a>
 
-  <a href="index.html" onclick="localStorage.clear()" style="display:block;margin:10px;color:red;">
-    🚪 Logout
-  </a>
-
-</div>
+  </div>
 
 </body>
 </html>
