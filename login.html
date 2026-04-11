@@ -6,27 +6,46 @@
 
   <style>
     body {
+      margin: 0;
       font-family: Arial;
-      background: #f5f7ff;
+      background: #f3f6ff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      animation: fade 0.6s ease-in;
+    }
+
+    @keyframes fade {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    .box {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      width: 280px;
       text-align: center;
-      padding-top: 80px;
-      color: #1f2937;
     }
 
     input {
+      width: 90%;
       padding: 10px;
       margin: 8px;
-      width: 220px;
+      border-radius: 10px;
       border: 1px solid #ccc;
-      border-radius: 8px;
     }
 
     button {
-      padding: 10px 18px;
+      width: 100%;
+      padding: 10px;
       background: #2563eb;
-      border: none;
       color: white;
-      border-radius: 8px;
+      border: none;
+      border-radius: 10px;
+      margin-top: 10px;
       cursor: pointer;
     }
 
@@ -38,29 +57,27 @@
 
 <body>
 
-  <h1>Login</h1>
+<div class="box">
+  <h2>Login</h2>
 
-  <input id="user" placeholder="Username"><br>
-  <input id="pass" type="password" placeholder="Password"><br>
+  <input id="user" placeholder="Username">
+  <input id="pass" type="password" placeholder="Password">
 
-  <button onclick="login()">Login</button>
+  <button onclick="login()">Enter</button>
+</div>
 
-  <p id="msg"></p>
+<script>
+  function login() {
+    const u = document.getElementById("user").value;
+    const p = document.getElementById("pass").value;
 
-  <script>
-    function login() {
-      const u = document.getElementById("user").value;
-      const p = document.getElementById("pass").value;
-
-      if (u && p) {
-        localStorage.setItem("user", u);
-        localStorage.setItem("loggedIn", "true");
-        window.location.href = "dashboard.html";
-      } else {
-        document.getElementById("msg").innerText = "Please fill in both fields.";
-      }
+    if (u && p) {
+      localStorage.setItem("user", u);
+      localStorage.setItem("loggedIn", "true");
+      window.location.href = "dashboard.html";
     }
-  </script>
+  }
+</script>
 
 </body>
 </html>
