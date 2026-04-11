@@ -4,6 +4,16 @@
   <div id="feed"></div>
 </div>
 
+<div style="margin-top:10px;">
+  <span id="badge"></span>
+</div>
+
+<script>
+let logs = JSON.parse(localStorage.getItem("reports") || "[]");
+document.getElementById("badge").innerHTML =
+  logs.length > 0 ? "🔴 Active Reports: " + logs.length : "🟢 All Safe";
+</script>
+
 <script>
 function loadFeed() {
   let logs = JSON.parse(localStorage.getItem("reports") || "[]");
