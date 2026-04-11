@@ -1,18 +1,144 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BullyWatch Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<div style="margin:15px;padding:15px;background:rgba(255,255,255,0.08);border-radius:16px;">
-  <h3>📡 Recent Activity</h3>
-  <div id="feed"></div>
-</div>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      animation: fade 0.5s ease;
+    }
 
-<div style="margin-top:10px;">
-  <span id="badge"></span>
+    @keyframes fade {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    .header {
+      padding: 25px;
+      text-align: center;
+    }
+
+    .card {
+      margin: 15px;
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      animation: slide 0.5s ease;
+    }
+
+    @keyframes slide {
+      from {transform: translateY(20px); opacity: 0;}
+      to {transform: translateY(0); opacity: 1;}
+    }
+
+    .btn {
+      display: block;
+      margin: 15px;
+      padding: 15px;
+      text-align: center;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #ef4444, #f97316);
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      transform: scale(1.03);
+    }
+
+    .nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(10px);
+    }
+
+    .nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 13px;
+    }
+
+    .badge {
+      margin-top: 10px;
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.15);
+      font-size: 13px;
+    }
+
+    .feed {
+      margin: 15px;
+      padding: 15px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(10px);
+    }
+
+    .item {
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+    }
+  </style>
+</head>
+
+<body>
+
+<script>
+  if (!localStorage.getItem("loggedIn")) {
+    window.location.href = "login.html";
+  }
+</script>
+
+<!-- HEADER -->
+<div class="header">
+  <h2>👋 Welcome, <span id="user"></span></h2>
+
+  <div id="badge" class="badge"></div>
 </div>
 
 <script>
-let logs = JSON.parse(localStorage.getItem("reports") || "[]");
-document.getElementById("badge").innerHTML =
-  logs.length > 0 ? "🔴 Active Reports: " + logs.length : "🟢 All Safe";
+  document.getElementById("user").innerText =
+    localStorage.getItem("user") || "User";
+
+  let logs = JSON.parse(localStorage.getItem("reports") || "[]");
+
+  document.getElementById("badge").innerText =
+    logs.length > 0
+      ? "🔴 Active Reports: " + logs.length
+      : "🟢 All Safe";
 </script>
+
+<!-- QUICK ACTION -->
+<div class="card">
+  <h3>⚡ Quick Actions</h3>
+  <p>Report or check safety status instantly</p>
+</div>
+
+<a class="btn" href="report.html">🚨 Send Emergency Alert</a>
+
+<!-- SMART FEED -->
+<div class="feed">
+  <h3>📡 Recent Activity</h3>
+
+  <div id="feed"></div>
+</div>
 
 <script>
 function loadFeed() {
@@ -20,12 +146,12 @@ function loadFeed() {
   let feed = document.getElementById("feed");
 
   if (logs.length === 0) {
-    feed.innerHTML = "<p>No reports yet</p>";
+    feed.innerHTML = "<p>No reports yet.</p>";
     return;
   }
 
-  feed.innerHTML = logs.slice(0,3).map(r => `
-    <div style="margin:10px 0;padding:10px;background:rgba(255,255,255,0.05);border-radius:10px;">
+  feed.innerHTML = logs.slice(0, 5).map(r => `
+    <div class="item">
       🚨 ${r.user}<br>
       🕒 ${r.time}<br>
       📍 ${r.location}
@@ -35,3 +161,13 @@ function loadFeed() {
 
 loadFeed();
 </script>
+
+<!-- NAV BAR -->
+<div class="nav">
+  <a href="dashboard.html">🏠 Home</a>
+  <a href="about.html">ℹ About</a>
+  <a href="report.html">🚨 Report</a>
+</div>
+
+</body>
+</html>
