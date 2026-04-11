@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="margin:0;font-family:Arial;background:#0f172a;color:white;">
+
+<script>
+  if (!localStorage.getItem("loggedIn")) {
+    window.location.href = "login.html";
+  }
+</script>
+
+<div style="padding:20px;text-align:center;">
+
+  <h1>📱 Dashboard</h1>
+
+  <p>Welcome, <span id="u"></span></p>
+
+  <script>
+    document.getElementById("u").innerText = localStorage.getItem("user");
+  </script>
+
+  <br>
+
+  <a href="report.html" style="display:block;margin:10px;color:#38bdf8;">🚨 Report Emergency</a>
+  <a href="about.html" style="display:block;margin:10px;color:#38bdf8;">📘 About</a>
+
+  <a href="index.html" onclick="localStorage.clear()" style="display:block;margin:10px;color:red;">
+    🚪 Logout
+  </a>
+
+</div>
+
+</body>
+</html>
