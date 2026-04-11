@@ -1,11 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Report</title>
+  <title>Report Emergency</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      background:#0f172a;
+      color:white;
+      font-family:Arial;
+      text-align:center;
+      padding-top:100px;
+    }
+
+    button {
+      background:red;
+      color:white;
+      padding:20px 30px;
+      border:none;
+      border-radius:15px;
+      font-size:20px;
+      cursor:pointer;
+    }
+
+    button:hover {
+      background:darkred;
+    }
+  </style>
 </head>
 
-<body style="background:#0f172a;color:white;font-family:Arial;text-align:center;padding-top:100px;">
+<body>
 
 <script>
   if (!localStorage.getItem("loggedIn")) {
@@ -14,49 +38,14 @@
 </script>
 
   <h1>🚨 Emergency Report</h1>
-  <p>Press only in real danger</p>
+  <p>Press only in danger</p>
 
-  <button onclick="sendAlert()"
-    style="background:red;color:white;padding:20px 30px;border:none;border-radius:15px;font-size:20px;">
+  <button onclick="alert('🚨 ALERT SENT (SIMULATED)')">
     SEND ALERT
   </button>
 
-  <p id="status"></p>
-
-  <script>
-    function sendAlert() {
-      document.getElementById("status").innerText = "🚨 Alert Sent to nearby users (simulated)";
-      alert("Emergency Sent!");
-    }
-  </script>
-
   <br><br>
-  <a href="dashboard.html" style="color:#38bdf8;">⬅ Back to Dashboard</a>
-
-</body>
-</html>    }
-
-    a {
-      color: #38bdf8;
-      display: block;
-      margin-top: 20px;
-      text-decoration: none;
-    }
-  </style>
-</head>
-
-<body>
-
-  <div class="box">
-    <h1>🚨 Emergency Report</h1>
-    <p>Press the button if you need help</p>
-
-    <button onclick="alert('🚨 Alert Sent! Nearby users notified (demo only)')">
-      REPORT NOW
-    </button>
-
-    <a href="index.html">⬅ Back Home</a>
-  </div>
+  <a href="dashboard.html" style="color:#38bdf8;">⬅ Back</a>
 
 </body>
 </html>
