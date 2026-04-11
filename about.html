@@ -6,35 +6,57 @@
 
   <style>
     body {
+      margin: 0;
       font-family: Arial;
-      background: #f5f7ff;
-      color: #1f2937;
-      padding: 20px;
+      background: #f3f6ff;
     }
 
-    a {
-      color: #2563eb;
+    .card {
+      margin: 20px;
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.08);
+      animation: fade 0.5s ease-in;
+    }
+
+    @keyframes fade {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    .nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+      box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+    }
+
+    .nav a {
       text-decoration: none;
+      color: #2563eb;
     }
   </style>
 </head>
 
 <body>
 
-  <h1>About BullyWatch</h1>
-
+<div class="card">
+  <h2>About BullyWatch</h2>
   <p>
-    BullyWatch is a school project that helps students understand how safety alerts can work using technology.
+    A school safety prototype designed to show how technology can help report bullying faster.
   </p>
+</div>
 
-  <h3>Features</h3>
-  <ul>
-    <li>Simple alert system concept</li>
-    <li>Easy reporting page</li>
-    <li>School safety awareness</li>
-  </ul>
-
-  <a href="dashboard.html">⬅ Back</a>
+<div class="nav">
+  <a href="dashboard.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="report.html">Report</a>
+</div>
 
 </body>
 </html>
