@@ -6,29 +6,32 @@
 
   <style>
     body {
-      background:#0f172a;
-      color:white;
-      font-family:Arial;
-      text-align:center;
-      padding-top:80px;
+      font-family: Arial;
+      background: #f5f7ff;
+      text-align: center;
+      padding-top: 80px;
+      color: #1f2937;
     }
 
     input {
-      padding:10px;
-      margin:10px;
-      width:200px;
+      padding: 10px;
+      margin: 8px;
+      width: 220px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
     }
 
     button {
-      padding:10px 20px;
-      background:#38bdf8;
-      border:none;
-      cursor:pointer;
-      font-weight:bold;
+      padding: 10px 18px;
+      background: #2563eb;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
     }
 
     button:hover {
-      background:white;
+      background: #1d4ed8;
     }
   </style>
 </head>
@@ -50,11 +53,11 @@
       const p = document.getElementById("pass").value;
 
       if (u && p) {
-        localStorage.setItem("loggedIn", "true");
         localStorage.setItem("user", u);
+        localStorage.setItem("loggedIn", "true");
         window.location.href = "dashboard.html";
       } else {
-        document.getElementById("msg").innerText = "Fill all fields";
+        document.getElementById("msg").innerText = "Please fill in both fields.";
       }
     }
   </script>
