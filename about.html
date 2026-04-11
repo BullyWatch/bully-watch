@@ -8,37 +8,31 @@
     body {
       margin: 0;
       font-family: Arial;
-      background: #f3f6ff;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
     }
 
     .card {
       margin: 20px;
-      background: white;
       padding: 20px;
-      border-radius: 16px;
-      box-shadow: 0 8px 15px rgba(0,0,0,0.08);
-      animation: fade 0.5s ease-in;
-    }
-
-    @keyframes fade {
-      from {opacity: 0;}
-      to {opacity: 1;}
+      border-radius: 18px;
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
     }
 
     .nav {
       position: fixed;
       bottom: 0;
       width: 100%;
-      background: white;
       display: flex;
       justify-content: space-around;
+      background: rgba(255,255,255,0.05);
       padding: 10px;
-      box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
     }
 
     .nav a {
+      color: white;
       text-decoration: none;
-      color: #2563eb;
     }
   </style>
 </head>
@@ -48,7 +42,7 @@
 <div class="card">
   <h2>About BullyWatch</h2>
   <p>
-    A school safety prototype designed to show how technology can help report bullying faster.
+    A modern school safety prototype designed to demonstrate emergency reporting using technology.
   </p>
 </div>
 
