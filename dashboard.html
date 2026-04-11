@@ -6,23 +6,56 @@
 
   <style>
     body {
-      font-family: Arial;
-      background: #f5f7ff;
       margin: 0;
-      color: #1f2937;
+      font-family: Arial;
+      background: #f3f6ff;
+      animation: fade 0.5s ease-in;
+    }
+
+    @keyframes fade {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
+    .header {
+      padding: 20px;
       text-align: center;
     }
 
-    .box {
-      padding: 40px;
+    .card {
+      background: white;
+      margin: 15px;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 15px rgba(0,0,0,0.08);
     }
 
-    a {
-      display: block;
-      margin: 10px;
-      color: #2563eb;
+    .nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: white;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+      box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+    }
+
+    .nav a {
       text-decoration: none;
-      font-weight: bold;
+      color: #2563eb;
+      font-size: 14px;
+    }
+
+    .btn {
+      display: block;
+      background: #ef4444;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      border-radius: 12px;
+      margin: 15px;
+      text-decoration: none;
     }
   </style>
 </head>
@@ -35,20 +68,26 @@
   }
 </script>
 
-  <div class="box">
-    <h1>Welcome 👋</h1>
+<div class="header">
+  <h2>Welcome, <span id="u"></span> 👋</h2>
+</div>
 
-    <p id="user"></p>
+<script>
+  document.getElementById("u").innerText =
+    localStorage.getItem("user");
+</script>
 
-    <script>
-      document.getElementById("user").innerText =
-        "Hello, " + localStorage.getItem("user");
-    </script>
+<div class="card">
+  📌 Quick Actions
+</div>
 
-    <a href="report.html">🚨 Report Safety Issue</a>
-    <a href="about.html">📘 About BullyWatch</a>
-    <a href="index.html" onclick="localStorage.clear()">🚪 Logout</a>
-  </div>
+<a class="btn" href="report.html">🚨 Report Incident</a>
+
+<div class="nav">
+  <a href="dashboard.html">Home</a>
+  <a href="about.html">About</a>
+  <a href="report.html">Report</a>
+</div>
 
 </body>
 </html>
