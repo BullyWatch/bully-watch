@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Report</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+
+<body style="background:#0f172a;color:white;font-family:Arial;text-align:center;padding-top:100px;">
+
+<script>
+  if (!localStorage.getItem("loggedIn")) {
+    window.location.href = "login.html";
+  }
+</script>
+
+  <h1>🚨 Emergency Report</h1>
+  <p>Press only in real danger</p>
+
+  <button onclick="sendAlert()"
+    style="background:red;color:white;padding:20px 30px;border:none;border-radius:15px;font-size:20px;">
+    SEND ALERT
+  </button>
+
+  <p id="status"></p>
+
+  <script>
+    function sendAlert() {
+      document.getElementById("status").innerText = "🚨 Alert Sent to nearby users (simulated)";
+      alert("Emergency Sent!");
+    }
+  </script>
+
+  <br><br>
+  <a href="dashboard.html" style="color:#38bdf8;">⬅ Back to Dashboard</a>
+
+</body>
+</html>    }
+
+    a {
+      color: #38bdf8;
+      display: block;
+      margin-top: 20px;
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="box">
+    <h1>🚨 Emergency Report</h1>
+    <p>Press the button if you need help</p>
+
+    <button onclick="alert('🚨 Alert Sent! Nearby users notified (demo only)')">
+      REPORT NOW
+    </button>
+
+    <a href="index.html">⬅ Back Home</a>
+  </div>
+
+</body>
+</html>
