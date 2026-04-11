@@ -6,26 +6,23 @@
 
   <style>
     body {
-      margin:0;
-      font-family:Arial;
-      background:#0f172a;
-      color:white;
+      font-family: Arial;
+      background: #f5f7ff;
+      margin: 0;
+      color: #1f2937;
+      text-align: center;
     }
 
     .box {
-      text-align:center;
-      padding:40px;
+      padding: 40px;
     }
 
     a {
-      display:block;
-      margin:10px;
-      color:#38bdf8;
-      text-decoration:none;
-    }
-
-    a:hover {
-      color:white;
+      display: block;
+      margin: 10px;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -39,21 +36,18 @@
 </script>
 
   <div class="box">
+    <h1>Welcome 👋</h1>
 
-    <h1>📱 Dashboard</h1>
-
-    <p>Welcome, <span id="user"></span></p>
+    <p id="user"></p>
 
     <script>
       document.getElementById("user").innerText =
-        localStorage.getItem("user");
+        "Hello, " + localStorage.getItem("user");
     </script>
 
-    <a href="report.html">🚨 Report Emergency</a>
-    <a href="about.html">📘 About Project</a>
-
+    <a href="report.html">🚨 Report Safety Issue</a>
+    <a href="about.html">📘 About BullyWatch</a>
     <a href="index.html" onclick="localStorage.clear()">🚪 Logout</a>
-
   </div>
 
 </body>
