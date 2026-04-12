@@ -1,65 +1,105 @@
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getFirestore, collection, onSnapshot } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #0a0f1a;
+      color: white;
+    }
+
+    header {
+      padding: 20px;
+      text-align: center;
+      background: #111827;
+      font-weight: bold;
+    }
+
+    .container {
+      padding: 15px;
+      padding-bottom: 80px;
+    }
+
+    .card {
+      background: #1f2937;
+      margin-bottom: 10px;
+      padding: 15px;
+      border-radius: 12px;
+      border-left: 5px solid #ef4444;
+    }
+
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-around;
+      background: rgba(17, 24, 39, 0.95);
+      padding: 12px 0;
+    }
+
+    .nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="nav">
+  <a href="index.html">🏠</a>
+  <a href="dashboard.html">📊</a>
+  <a href="report.html">🚨</a>
+  <a href="about.html">ℹ️</a>
+</div>
+
+<header>📊 Live Reports</header>
+
+<div class="container" id="feed"></div>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script>
 const firebaseConfig = {
-  apiKey: "AIzaSyB_0NmIehy-FLZ-t9FGEemKcH_G1-Z1vgk",
+  apiKey: "AIzaSyB_0NmIehy-FLZ-t9FGEemKcH_H1-Z1vgk",
   authDomain: "bullywatch-12ce1.firebaseapp.com",
   projectId: "bullywatch-12ce1"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 const feed = document.getElementById("feed");
 
-function getStatusColor(status) {
-  if (status === "ACTIVE") return "#ef4444";
-  if (status === "RESOLVED") return "#22c55e";
-  return "#6b7280";
-}
-
-onSnapshot(collection(db, "reports"), (snapshot) => {
+db.collection("reports").onSnapshot(snapshot => {
   feed.innerHTML = "";
 
   if (snapshot.empty) {
-    feed.innerHTML = `
-      <div style="text-align:center;opacity:0.6;margin-top:40px;">
-        No reports yet 🚫
-      </div>
-    `;
+    feed.innerHTML = "<p style='text-align:center'>No reports yet</p>";
     return;
   }
 
   snapshot.forEach(doc => {
     const r = doc.data();
 
-    const user = r.user || "Unknown";
-    const location = r.location || "No location";
-    const time = r.time || "No time";
-    const status = r.status || "ACTIVE";
-
     feed.innerHTML += `
       <div class="card">
-        🚨 <b>${user}</b><br>
-        📍 ${location}<br>
-        🕒 ${time}<br>
-
-        <div style="margin-top:8px;">
-          <span style="
-            display:inline-block;
-            padding:4px 10px;
-            border-radius:8px;
-            background:${getStatusColor(status)};
-            color:white;
-            font-size:12px;
-          ">
-            ${status}
-          </span>
-        </div>
+        🚨 ${r.user}<br>
+        📍 ${r.location}<br>
+        🕒 ${r.time}
       </div>
     `;
   });
 });
-  </script>
+</script>
+
+</body>
+</html>
