@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Dashboard - BullyWatch</title>
+  <title>Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -16,12 +16,12 @@
       padding: 20px;
       text-align: center;
       background: #111827;
-      font-size: 18px;
       font-weight: bold;
     }
 
     .container {
       padding: 15px;
+      padding-bottom: 80px;
     }
 
     .card {
@@ -37,19 +37,35 @@
       opacity: 0.7;
     }
 
-    .empty {
-      text-align: center;
-      opacity: 0.6;
-      margin-top: 50px;
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-around;
+      background: rgba(17, 24, 39, 0.95);
+      padding: 12px 0;
+    }
+
+    .nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
     }
   </style>
 </head>
 
 <body>
 
-<header>
-  📊 Live Reports Dashboard
-</header>
+<div class="nav">
+  <a href="index.html">🏠</a>
+  <a href="dashboard.html">📊</a>
+  <a href="report.html">🚨</a>
+  <a href="about.html">ℹ️</a>
+</div>
+
+<header>📊 Live Reports</header>
 
 <div class="container" id="feed"></div>
 
@@ -73,7 +89,7 @@ onSnapshot(collection(db, "reports"), (snapshot) => {
   feed.innerHTML = "";
 
   if (snapshot.empty) {
-    feed.innerHTML = "<div class='empty'>No reports yet</div>";
+    feed.innerHTML = "<p style='text-align:center;opacity:0.6'>No reports yet</p>";
     return;
   }
 
