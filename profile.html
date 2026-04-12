@@ -66,12 +66,16 @@
 <div class="card">
   <h2>👤 Profile</h2>
 
-  <p id="email"></p>
+  <p><b>Name:</b> <span id="name"></span></p>
+  <p><b>Email:</b> <span id="email"></span></p>
 
   <button onclick="logout()">Logout</button>
 </div>
 
 <script>
+document.getElementById("name").innerText =
+  localStorage.getItem("userName") || "No name set";
+
 document.getElementById("email").innerText =
   localStorage.getItem("userEmail") || "Not logged in";
 
