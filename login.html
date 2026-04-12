@@ -13,14 +13,25 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 window.login = function () {
-  const email = user.value;
-  const password = pass.value;
+  const email = document.getElementById("user").value;
+  const password = document.getElementById("pass").value;
+
+  if (!email || !password) {
+    alert("Please fill in all fields");
+    return;
+  }
 
   signInWithEmailAndPassword(auth, email, password)
     .then((cred) => {
+      // Save user for report system
       localStorage.setItem("userEmail", cred.user.email);
+
+      alert("Login successful!");
       window.location.href = "./dashboard.html";
     })
-    .catch(err => alert(err.message));
+    .catch((err) => {
+      alert("Login failed: " + err.message);
+      console.error(err);
+    });
 };
 </script>
