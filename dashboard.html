@@ -1,59 +1,129 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Dashboard</title>
+  <title>Dashboard - BullyWatch</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    body { margin:0; font-family:Arial; background:#0a0f1a; color:white; }
-    header { padding:20px; text-align:center; background:#111827; font-weight:bold; }
-    .card { background:#1f2937; margin:10px; padding:15px; border-radius:12px; }
-    .nav { position:fixed; bottom:0; width:100%; display:flex; justify-content:space-around; background:#111827; padding:10px; }
-    .nav a { color:white; text-decoration:none; }
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+    }
+
+    header {
+      padding: 18px;
+      text-align: center;
+      font-weight: bold;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+    }
+
+    .container {
+      padding: 10px;
+      padding-bottom: 80px;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+      border-radius: 14px;
+      padding: 15px;
+      margin: 10px 0;
+      border-left: 4px solid #3b82f6;
+    }
+
+    .title {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .time {
+      font-size: 12px;
+      opacity: 0.7;
+      margin-top: 5px;
+    }
+
+    .empty {
+      text-align: center;
+      opacity: 0.6;
+      margin-top: 40px;
+    }
+
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      background: rgba(15, 23, 42, 0.9);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+    }
   </style>
 </head>
 
 <body>
 
-<header>📊 Live Reports</header>
+<header>📊 Live Reports Dashboard</header>
 
-<div id="feed"></div>
+<div class="container" id="feed"></div>
 
 <div class="nav">
-  <a href="dashboard.html">Home</a>
-  <a href="report.html">Report</a>
-  <a href="profile.html">Profile</a>
-  <a href="admin.html">Admin</a>
+  <a href="index.html">🏠</a>
+  <a href="dashboard.html">📊</a>
+  <a href="report.html">🚨</a>
+  <a href="profile.html">👤</a>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
-firebase.initializeApp({
+const firebaseConfig = {
   apiKey: "AIzaSyB_0NmIehy-FLZ-t9FGEemKcH_G1-Z1vgk",
   authDomain: "bullywatch-12ce1.firebaseapp.com",
   projectId: "bullywatch-12ce1"
-});
+};
 
+firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
+
 const feed = document.getElementById("feed");
 
-db.collection("reports").onSnapshot(snap => {
-  feed.innerHTML = "";
+db.collection("reports").orderBy("timestamp", "desc")
+  .onSnapshot(snapshot => {
 
-  snap.forEach(doc => {
-    const r = doc.data();
+    feed.innerHTML = "";
 
-    feed.innerHTML += `
-      <div class="card">
-        🚨 <b>${r.userName}</b><br>
-        📍 ${r.location}<br>
-        🕒 ${r.time}
-      </div>
-    `;
+    if (snapshot.empty) {
+      feed.innerHTML = "<div class='empty'>No reports yet</div>";
+      return;
+    }
+
+    let count = snapshot.size;
+
+    snapshot.forEach(doc => {
+      const r = doc.data();
+
+      feed.innerHTML += `
+        <div class="card">
+          <div class="title">🚨 Report #${count--}</div>
+          📍 ${r.location || "No location"}<br>
+          <div class="time">🕒 ${r.time || "No time"}</div>
+        </div>
+      `;
+    });
+
   });
-});
 </script>
 
 </body>
