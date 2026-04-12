@@ -1,45 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Report</title>
+  <title>Profile</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body { margin:0; font-family:Arial; background:#0b1220; color:white; display:flex; justify-content:center; align-items:center; height:100vh; }
-    .card { text-align:center; background:#111827; padding:30px; border-radius:15px; width:90%; max-width:400px; }
-    button { width:100%; padding:15px; border:none; border-radius:12px; background:#ef4444; color:white; font-weight:bold; }
+    .card { background:#111827; padding:25px; border-radius:15px; width:90%; max-width:350px; text-align:center; }
+    input, button { width:100%; padding:12px; margin:8px 0; border:none; border-radius:10px; }
+    button { background:#3b82f6; color:white; font-weight:bold; }
+    .danger { background:#ef4444; }
   </style>
 </head>
 
 <body>
 
 <div class="card">
-  <h2>🚨 Emergency Alert</h2>
-  <button onclick="sendReport()">SEND ALERT</button>
+  <h2>👤 Profile</h2>
+
+  <input id="name" placeholder="Your Name">
+
+  <p id="email"></p>
+
+  <button onclick="save()">Save Name</button>
+  <button class="danger" onclick="logout()">Logout</button>
 </div>
 
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
 <script>
-firebase.initializeApp({
-  apiKey: "AIzaSyB_0NmIehy-FLZ-t9FGEemKcH_G1-Z1vgk",
-  authDomain: "bullywatch-12ce1.firebaseapp.com",
-  projectId: "bullywatch-12ce1"
-});
+document.getElementById("name").value = localStorage.getItem("userName") || "";
+document.getElementById("email").innerText = localStorage.getItem("userEmail") || "";
 
-const db = firebase.firestore();
+function save() {
+  localStorage.setItem("userName", document.getElementById("name").value);
+  alert("Saved!");
+}
 
-function sendReport() {
-  db.collection("reports").add({
-    userName: localStorage.getItem("userName") || "Anonymous",
-    email: localStorage.getItem("userEmail") || "",
-    location: "School",
-    time: new Date().toLocaleString(),
-    status: "ACTIVE"
-  });
-
-  alert("🚨 Sent!");
+function logout() {
+  localStorage.clear();
+  window.location.href = "login.html";
 }
 </script>
 
