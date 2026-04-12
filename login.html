@@ -59,17 +59,13 @@
 
 <body>
 
-<div class="nav">
-  <a href="index.html">🏠</a>
-  <a href="dashboard.html">📊</a>
-  <a href="report.html">🚨</a>
-  <a href="profile.html">👤</a>
-</div>
-
 <div class="card">
   <h2>Login</h2>
+
+  <input id="name" placeholder="Full Name (e.g. JV Rañeses)">
   <input id="user" placeholder="Email">
   <input id="pass" type="password" placeholder="Password">
+
   <button onclick="login()">Login</button>
 </div>
 
@@ -87,10 +83,12 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 
 function login() {
+  const displayName = document.getElementById("name").value;
+
   auth.signInWithEmailAndPassword(user.value, pass.value)
     .then((cred) => {
+      localStorage.setItem("userName", displayName);
       localStorage.setItem("userEmail", cred.user.email);
-      localStorage.setItem("userName", cred.user.email.split("@")[0]);
       window.location.href = "dashboard.html";
     })
     .catch(err => alert(err.message));
