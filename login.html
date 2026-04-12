@@ -3,82 +3,41 @@
 <head>
   <title>Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: linear-gradient(135deg, #6366f1, #22c55e);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-    }
-
-    .box {
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(12px);
-      padding: 30px;
-      border-radius: 20px;
-      width: 280px;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      animation: pop 0.5s ease;
-    }
-
-    @keyframes pop {
-      from {transform: scale(0.9); opacity: 0;}
-      to {transform: scale(1); opacity: 1;}
-    }
-
-    input {
-      width: 90%;
-      padding: 10px;
-      margin: 8px;
-      border-radius: 10px;
-      border: none;
-      outline: none;
-    }
-
-    button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 10px;
-      border: none;
-      background: white;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button:hover {
-      transform: scale(1.05);
-    }
-  </style>
 </head>
 
 <body>
 
-<div class="box">
-  <h2>Login</h2>
+<h2>Login</h2>
 
-  <input id="user" placeholder="Username">
-  <input id="pass" type="password" placeholder="Password">
+<input id="user" placeholder="Email"><br><br>
+<input id="pass" type="password" placeholder="Password"><br><br>
 
-  <button onclick="login()">Enter</button>
-</div>
+<button onclick="login()">Login</button>
 
-<script>
-  function login() {
-    const u = document.getElementById("user").value;
-    const p = document.getElementById("pass").value;
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-    if (u && p) {
-      localStorage.setItem("user", u);
-      localStorage.setItem("loggedIn", "true");
+const firebaseConfig = {
+  apiKey: "AIzaSyB_0NmIehy-FLZ-t9FGEemKcH_G1-Z1vgk",
+  authDomain: "bullywatch-12ce1.firebaseapp.com",
+  projectId: "bullywatch-12ce1"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+window.login = function () {
+  const email = document.getElementById("user").value;
+  const password = document.getElementById("pass").value;
+
+  signInWithEmailAndPassword(auth, email, password)
+    .then(() => {
       window.location.href = "dashboard.html";
-    }
-  }
+    })
+    .catch(err => alert(err.message));
+};
 </script>
 
 </body>
