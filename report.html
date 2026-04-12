@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Report - BullyWatch</title>
+  <title>Report</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -23,7 +23,6 @@
       border-radius: 15px;
       width: 90%;
       max-width: 400px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.5);
     }
 
     button {
@@ -35,30 +34,39 @@
       color: white;
       font-size: 18px;
       font-weight: bold;
-      cursor: pointer;
     }
 
-    button:hover {
-      background: #dc2626;
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-around;
+      background: rgba(17, 24, 39, 0.95);
+      padding: 12px 0;
     }
 
-    .note {
-      margin-top: 10px;
-      font-size: 12px;
-      opacity: 0.6;
+    .nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
     }
   </style>
 </head>
 
 <body>
 
+<div class="nav">
+  <a href="index.html">🏠</a>
+  <a href="dashboard.html">📊</a>
+  <a href="report.html">🚨</a>
+  <a href="about.html">ℹ️</a>
+</div>
+
 <div class="card">
   <h2>🚨 Emergency Alert</h2>
-  <p>Tap only in real situations</p>
-
   <button onclick="sendReport()">SEND ALERT</button>
-
-  <div class="note">Sends live report to dashboard</div>
 </div>
 
 <script type="module">
