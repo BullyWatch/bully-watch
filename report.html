@@ -2,71 +2,38 @@
 <html>
 <head>
   <title>Report</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial;
-      background: linear-gradient(135deg, #dc2626, #f97316);
-      color: white;
-      text-align: center;
-    }
-
-    .box {
-      padding: 80px 20px;
-    }
-
-    .btn {
-      background: white;
-      color: black;
-      padding: 18px 24px;
-      border-radius: 16px;
-      font-weight: bold;
-      display: inline-block;
-      cursor: pointer;
-    }
-
-    .btn:hover {
-      transform: scale(1.05);
-    }
-  </style>
 </head>
 
 <body>
 
-<script>
-  if (!localStorage.getItem("loggedIn")) {
-    window.location.href = "login.html";
-  }
-</script>
+<h2>Send Alert</h2>
 
-<div class="box">
-  <h1>🚨 Emergency Report</h1>
-  <p>Smart reporting system</p>
+<button onclick="sendReport()">SEND ALERT</button>
 
-  <div class="btn" onclick="sendReport()">
-    SEND ALERT
-  </div>
-</div>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getFirestore, collection, addDoc } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-<script>
-function sendReport() {
-  const user = localStorage.getItem("user") || "Unknown";
+const firebaseConfig = {
+  apiKey: "AIzaSyB_0NmIehy-FLZ-t9FGEemKcH_G1-Z1vgk",
+  authDomain: "bullywatch-12ce1.firebaseapp.com",
+  projectId: "bullywatch-12ce1"
+};
 
-  const report = {
-    user: user,
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+window.sendReport = async function () {
+  await addDoc(collection(db, "reports"), {
+    user: "User",
     time: new Date().toLocaleString(),
-    location: "School Campus (Simulated)",
-    status: "Active Alert"
-  };
+    location: "School",
+    status: "ACTIVE"
+  });
 
-  let logs = JSON.parse(localStorage.getItem("reports") || "[]");
-  logs.unshift(report);
-  localStorage.setItem("reports", JSON.stringify(logs));
-
-  alert("🚨 Alert Sent Successfully!");
-}
+  alert("🚨 Alert sent!");
+};
 </script>
 
 </body>
