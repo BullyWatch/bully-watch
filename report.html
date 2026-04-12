@@ -1,14 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Report</title>
+  <title>Report - BullyWatch</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #0b1220;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      text-align: center;
+      background: #111827;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.5);
+    }
+
+    button {
+      padding: 15px;
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      background: #ef4444;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #dc2626;
+    }
+
+    .note {
+      margin-top: 10px;
+      font-size: 12px;
+      opacity: 0.6;
+    }
+  </style>
 </head>
 
 <body>
 
-<h2>Send Alert</h2>
+<div class="card">
+  <h2>🚨 Emergency Alert</h2>
+  <p>Tap only in real situations</p>
 
-<button onclick="sendReport()">SEND ALERT</button>
+  <button onclick="sendReport()">SEND ALERT</button>
+
+  <div class="note">Sends live report to dashboard</div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -26,13 +77,13 @@ const db = getFirestore(app);
 
 window.sendReport = async function () {
   await addDoc(collection(db, "reports"), {
-    user: "User",
+    user: "Anonymous",
     time: new Date().toLocaleString(),
     location: "School",
     status: "ACTIVE"
   });
 
-  alert("🚨 Alert sent!");
+  alert("🚨 Alert Sent!");
 };
 </script>
 
