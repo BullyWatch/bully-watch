@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin Panel v2</title>
+  <title>Admin Panel v3</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -17,6 +17,15 @@
       text-align: center;
       background: #111827;
       font-weight: bold;
+    }
+
+    /* ANALYTICs */
+    .stats {
+      display: flex;
+      justify-content: space-around;
+      padding: 10px;
+      background: #0f172a;
+      font-size: 14px;
     }
 
     .controls {
@@ -63,16 +72,23 @@
 
     .resolve { background: #22c55e; color: white; }
     .delete { background: #ef4444; color: white; }
+    .map { background: #3b82f6; color: white; }
   </style>
 </head>
 
 <body>
 
-<header>🛡 Admin Panel v2</header>
+<header>🛡 Admin Panel v3 (Analytics + GPS)</header>
+
+<div class="stats">
+  <div>🚨 Total: <span id="total">0</span></div>
+  <div>🟢 Active: <span id="active">0</span></div>
+  <div>✅ Resolved: <span id="resolved">0</span></div>
+</div>
 
 <div class="controls">
   <input id="search" placeholder="Search user..." oninput="render()" />
-  
+
   <select id="filter" onchange="render()">
     <option value="ALL">All</option>
     <option value="ACTIVE">Active</option>
@@ -95,7 +111,6 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-
 const admins = [
   "ranesesjv@gmail.com",
   "felizce.f@gmail.com",
@@ -108,22 +123,39 @@ if (!admins.includes(currentUserEmail)) {
   document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>Access Denied</h2>";
 }
 
-
-// DATA
 let reports = [];
 
-
 db.collection("reports").onSnapshot(snapshot => {
+
   reports = [];
 
+  let total = 0;
+  let active = 0;
+  let resolved = 0;
+
   snapshot.forEach(doc => {
-    reports.push({ id: doc.id, ...doc.data() });
+    const r = doc.data();
+
+    reports.push({ id: doc.id, ...r });
+
+    total++;
+
+    if ((r.status || "ACTIVE") === "RESOLVED") {
+      resolved++;
+    } else {
+      active++;
+    }
   });
+
+  document.getElementById("total").innerText = total;
+  document.getElementById("active").innerText = active;
+  document.getElementById("resolved").innerText = resolved;
 
   render();
 });
 
-  
+
+
 function render() {
   const feed = document.getElementById("feed");
   const search = document.getElementById("search").value.toLowerCase();
@@ -148,6 +180,11 @@ function render() {
   }
 
   filtered.forEach(r => {
+
+    let mapLink = r.location?.includes(",")
+      ? `https://www.google.com/maps?q=${r.location}`
+      : null;
+
     feed.innerHTML += `
       <div class="card">
         👤 <b>${r.userName}</b><br>
@@ -157,6 +194,12 @@ function render() {
         <div class="status">
           ⚡ Status: ${r.status || "ACTIVE"}
         </div>
+
+        ${mapLink ? `
+          <a href="${mapLink}" target="_blank">
+            <button class="map">Open Map</button>
+          </a>
+        ` : ""}
 
         <button class="resolve" onclick="resolve('${r.id}')">
           Resolve
@@ -176,7 +219,6 @@ function resolve(id) {
     status: "RESOLVED"
   });
 }
-
 
 function removeReport(id) {
   db.collection("reports").doc(id).delete();
