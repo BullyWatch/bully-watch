@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin Panel</title>
+  <title>Admin Panel v2</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -19,6 +19,21 @@
       font-weight: bold;
     }
 
+    .controls {
+      display: flex;
+      gap: 8px;
+      padding: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    input, select {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+    }
+
     #feed {
       padding-bottom: 80px;
     }
@@ -34,6 +49,7 @@
     .status {
       font-size: 12px;
       opacity: 0.8;
+      margin-top: 5px;
     }
 
     button {
@@ -45,29 +61,24 @@
       font-weight: bold;
     }
 
-    .resolve {
-      background: #22c55e;
-      color: white;
-    }
-
-    .delete {
-      background: #ef4444;
-      color: white;
-    }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      background: #111827;
-      padding: 10px;
-      text-align: center;
-    }
+    .resolve { background: #22c55e; color: white; }
+    .delete { background: #ef4444; color: white; }
   </style>
 </head>
 
 <body>
 
-<header>🛡 Admin Panel</header>
+<header>🛡 Admin Panel v2</header>
+
+<div class="controls">
+  <input id="search" placeholder="Search user..." oninput="render()" />
+  
+  <select id="filter" onchange="render()">
+    <option value="ALL">All</option>
+    <option value="ACTIVE">Active</option>
+    <option value="RESOLVED">Resolved</option>
+  </select>
+</div>
 
 <div id="feed"></div>
 
@@ -84,27 +95,59 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-const ADMIN_EMAIL = "ranesesjv@gmail.com";
 
-// 🔐 ACCESS CONTROL
-if (localStorage.getItem("userEmail") !== ADMIN_EMAIL) {
+const admins = [
+  "ranesesjv@gmail.com",
+  "felizce.f@gmail.com",
+  "joisybsedano@gmail.com"
+];
+
+const currentUserEmail = localStorage.getItem("userEmail");
+
+if (!admins.includes(currentUserEmail)) {
   document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>Access Denied</h2>";
 }
 
-// 📊 LOAD REPORTS
-const feed = document.getElementById("feed");
 
-db.collection("reports").orderBy("time", "desc").onSnapshot(snapshot => {
+// DATA
+let reports = [];
+
+
+db.collection("reports").onSnapshot(snapshot => {
+  reports = [];
+
+  snapshot.forEach(doc => {
+    reports.push({ id: doc.id, ...doc.data() });
+  });
+
+  render();
+});
+
+  
+function render() {
+  const feed = document.getElementById("feed");
+  const search = document.getElementById("search").value.toLowerCase();
+  const filter = document.getElementById("filter").value;
+
   feed.innerHTML = "";
 
-  if (snapshot.empty) {
-    feed.innerHTML = "<p style='text-align:center'>No reports yet</p>";
+  let filtered = reports.filter(r => {
+    const nameMatch = r.userName?.toLowerCase().includes(search);
+    const status = r.status || "ACTIVE";
+
+    const filterMatch =
+      filter === "ALL" ? true :
+      status === filter;
+
+    return nameMatch && filterMatch;
+  });
+
+  if (filtered.length === 0) {
+    feed.innerHTML = "<p style='text-align:center'>No reports found</p>";
     return;
   }
 
-  snapshot.forEach(doc => {
-    const r = doc.data();
-
+  filtered.forEach(r => {
     feed.innerHTML += `
       <div class="card">
         👤 <b>${r.userName}</b><br>
@@ -115,26 +158,26 @@ db.collection("reports").orderBy("time", "desc").onSnapshot(snapshot => {
           ⚡ Status: ${r.status || "ACTIVE"}
         </div>
 
-        <button class="resolve" onclick="resolve('${doc.id}')">
+        <button class="resolve" onclick="resolve('${r.id}')">
           Resolve
         </button>
 
-        <button class="delete" onclick="removeReport('${doc.id}')">
+        <button class="delete" onclick="removeReport('${r.id}')">
           Delete
         </button>
       </div>
     `;
   });
-});
+}
 
-// ✅ MARK AS RESOLVED
+
 function resolve(id) {
   db.collection("reports").doc(id).update({
     status: "RESOLVED"
   });
 }
 
-// 🗑 DELETE REPORT
+
 function removeReport(id) {
   db.collection("reports").doc(id).delete();
 }
