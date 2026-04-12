@@ -22,7 +22,6 @@
       border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
-    /* ANALYTICS */
     .stats {
       display: flex;
       justify-content: space-around;
@@ -38,7 +37,6 @@
       font-size: 13px;
     }
 
-    /* CONTROLS */
     .controls {
       display: flex;
       gap: 10px;
@@ -60,12 +58,10 @@
       color: #cbd5e1;
     }
 
-    /* FEED */
     #feed {
       padding-bottom: 80px;
     }
 
-    /* GLASS CARD */
     .card {
       margin: 12px;
       padding: 15px;
@@ -87,7 +83,6 @@
       margin-top: 6px;
     }
 
-    /* BUTTONS */
     button {
       margin-top: 10px;
       padding: 8px 10px;
@@ -124,14 +119,12 @@
 
 <header>🛡 BullyWatch Admin Dashboard</header>
 
-<!-- STATS -->
 <div class="stats">
   <div>🚨<br><span id="total">0</span></div>
   <div>🟢<br><span id="active">0</span></div>
   <div>✅<br><span id="resolved">0</span></div>
 </div>
 
-<!-- CONTROLS -->
 <div class="controls">
   <input id="search" placeholder="Search user..." oninput="render()" />
   
@@ -161,6 +154,7 @@ const admins = [
   "ranesesjv@gmail.com",
   "felizce.f@gmail.com",
   "joisybsedano@gmail.com"
+  "cocoaolate@gmail.com"
 ];
 
 if (!admins.includes(localStorage.getItem("userEmail"))) {
