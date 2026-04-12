@@ -25,59 +25,54 @@
       text-align: center;
     }
 
-    button {
+    input, button {
       width: 100%;
       padding: 12px;
-      border: none;
+      margin: 8px 0;
       border-radius: 10px;
-      background: #ef4444;
+      border: none;
+    }
+
+    button {
+      background: #3b82f6;
       color: white;
       font-weight: bold;
-    }
-
-    .nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: space-around;
-      background: rgba(17, 24, 39, 0.95);
-      padding: 12px 0;
-    }
-
-    .nav a {
-      color: white;
-      text-decoration: none;
-      font-size: 18px;
     }
   </style>
 </head>
 
 <body>
 
-<div class="nav">
-  <a href="index.html">🏠</a>
-  <a href="dashboard.html">📊</a>
-  <a href="report.html">🚨</a>
-  <a href="profile.html">👤</a>
-</div>
-
 <div class="card">
   <h2>👤 Profile</h2>
 
-  <p><b>Name:</b> <span id="name"></span></p>
-  <p><b>Email:</b> <span id="email"></span></p>
+  <input id="editName" placeholder="Your Name">
 
-  <button onclick="logout()">Logout</button>
+  <p><b>Email:</b></p>
+  <p id="email"></p>
+
+  <button onclick="saveName()">Save Name</button>
+  <button onclick="logout()" style="background:#ef4444">Logout</button>
 </div>
 
 <script>
-document.getElementById("name").innerText =
-  localStorage.getItem("userName") || "No name set";
+document.getElementById("editName").value =
+  localStorage.getItem("userName") || "";
 
 document.getElementById("email").innerText =
   localStorage.getItem("userEmail") || "Not logged in";
+
+function saveName() {
+  const newName = document.getElementById("editName").value.trim();
+
+  if (!newName) {
+    alert("Name cannot be empty");
+    return;
+  }
+
+  localStorage.setItem("userName", newName);
+  alert("Name updated!");
+}
 
 function logout() {
   localStorage.clear();
