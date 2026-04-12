@@ -1,94 +1,140 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Admin Panel v3</title>
+  <title>Admin Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
       margin: 0;
       font-family: Arial;
-      background: #0a0f1a;
+      background: linear-gradient(135deg, #0f172a, #1e293b, #0b1220);
       color: white;
     }
 
     header {
-      padding: 20px;
+      padding: 22px;
       text-align: center;
-      background: #111827;
       font-weight: bold;
+      font-size: 18px;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.1);
     }
 
-    /* ANALYTICs */
+    /* ANALYTICS */
     .stats {
       display: flex;
       justify-content: space-around;
-      padding: 10px;
-      background: #0f172a;
-      font-size: 14px;
+      padding: 12px;
+      margin: 10px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
     }
 
+    .stats div {
+      text-align: center;
+      font-size: 13px;
+    }
+
+    /* CONTROLS */
     .controls {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       padding: 10px;
-      flex-wrap: wrap;
       justify-content: center;
+      flex-wrap: wrap;
     }
 
     input, select {
       padding: 10px;
-      border-radius: 8px;
+      border-radius: 10px;
       border: none;
       outline: none;
+      background: rgba(255,255,255,0.1);
+      color: white;
     }
 
+    input::placeholder {
+      color: #cbd5e1;
+    }
+
+    /* FEED */
     #feed {
       padding-bottom: 80px;
     }
 
+    /* GLASS CARD */
     .card {
-      background: #1f2937;
-      margin: 10px;
-      padding: 12px;
-      border-radius: 12px;
-      border-left: 5px solid #ef4444;
+      margin: 12px;
+      padding: 15px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      transition: 0.2s ease;
+    }
+
+    .card:hover {
+      transform: scale(1.01);
     }
 
     .status {
       font-size: 12px;
       opacity: 0.8;
-      margin-top: 5px;
+      margin-top: 6px;
     }
 
+    /* BUTTONS */
     button {
-      margin-top: 8px;
-      padding: 8px;
+      margin-top: 10px;
+      padding: 8px 10px;
       border: none;
-      border-radius: 6px;
+      border-radius: 10px;
       cursor: pointer;
       font-weight: bold;
+      transition: 0.2s;
     }
 
-    .resolve { background: #22c55e; color: white; }
-    .delete { background: #ef4444; color: white; }
-    .map { background: #3b82f6; color: white; }
+    button:hover {
+      transform: scale(1.05);
+    }
+
+    .resolve {
+      background: linear-gradient(135deg, #22c55e, #16a34a);
+      color: white;
+    }
+
+    .delete {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: white;
+    }
+
+    .map {
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+    }
+
   </style>
 </head>
 
 <body>
 
-<header>🛡 Admin Panel v3 (Analytics + GPS)</header>
+<header>🛡 BullyWatch Admin Dashboard</header>
 
+<!-- STATS -->
 <div class="stats">
-  <div>🚨 Total: <span id="total">0</span></div>
-  <div>🟢 Active: <span id="active">0</span></div>
-  <div>✅ Resolved: <span id="resolved">0</span></div>
+  <div>🚨<br><span id="total">0</span></div>
+  <div>🟢<br><span id="active">0</span></div>
+  <div>✅<br><span id="resolved">0</span></div>
 </div>
 
+<!-- CONTROLS -->
 <div class="controls">
   <input id="search" placeholder="Search user..." oninput="render()" />
-
+  
   <select id="filter" onchange="render()">
     <option value="ALL">All</option>
     <option value="ACTIVE">Active</option>
@@ -117,9 +163,7 @@ const admins = [
   "joisybsedano@gmail.com"
 ];
 
-const currentUserEmail = localStorage.getItem("userEmail");
-
-if (!admins.includes(currentUserEmail)) {
+if (!admins.includes(localStorage.getItem("userEmail"))) {
   document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>Access Denied</h2>";
 }
 
@@ -135,16 +179,10 @@ db.collection("reports").onSnapshot(snapshot => {
 
   snapshot.forEach(doc => {
     const r = doc.data();
-
     reports.push({ id: doc.id, ...r });
 
     total++;
-
-    if ((r.status || "ACTIVE") === "RESOLVED") {
-      resolved++;
-    } else {
-      active++;
-    }
+    (r.status === "RESOLVED") ? resolved++ : active++;
   });
 
   document.getElementById("total").innerText = total;
@@ -154,8 +192,6 @@ db.collection("reports").onSnapshot(snapshot => {
   render();
 });
 
-
-
 function render() {
   const feed = document.getElementById("feed");
   const search = document.getElementById("search").value.toLowerCase();
@@ -164,24 +200,14 @@ function render() {
   feed.innerHTML = "";
 
   let filtered = reports.filter(r => {
-    const nameMatch = r.userName?.toLowerCase().includes(search);
-    const status = r.status || "ACTIVE";
-
-    const filterMatch =
-      filter === "ALL" ? true :
-      status === filter;
-
-    return nameMatch && filterMatch;
+    const matchName = r.userName?.toLowerCase().includes(search);
+    const matchStatus = filter === "ALL" ? true : (r.status || "ACTIVE") === filter;
+    return matchName && matchStatus;
   });
-
-  if (filtered.length === 0) {
-    feed.innerHTML = "<p style='text-align:center'>No reports found</p>";
-    return;
-  }
 
   filtered.forEach(r => {
 
-    let mapLink = r.location?.includes(",")
+    let map = r.location?.includes(",")
       ? `https://www.google.com/maps?q=${r.location}`
       : null;
 
@@ -191,33 +217,21 @@ function render() {
         📍 ${r.location}<br>
         🕒 ${r.time}<br>
 
-        <div class="status">
-          ⚡ Status: ${r.status || "ACTIVE"}
-        </div>
+        <div class="status">⚡ ${r.status || "ACTIVE"}</div>
 
-        ${mapLink ? `
-          <a href="${mapLink}" target="_blank">
-            <button class="map">Open Map</button>
-          </a>
-        ` : ""}
+        ${map ? `<a href="${map}" target="_blank">
+          <button class="map">Open Map</button>
+        </a>` : ""}
 
-        <button class="resolve" onclick="resolve('${r.id}')">
-          Resolve
-        </button>
-
-        <button class="delete" onclick="removeReport('${r.id}')">
-          Delete
-        </button>
+        <button class="resolve" onclick="resolve('${r.id}')">Resolve</button>
+        <button class="delete" onclick="removeReport('${r.id}')">Delete</button>
       </div>
     `;
   });
 }
 
-
 function resolve(id) {
-  db.collection("reports").doc(id).update({
-    status: "RESOLVED"
-  });
+  db.collection("reports").doc(id).update({ status: "RESOLVED" });
 }
 
 function removeReport(id) {
