@@ -1,3 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Report</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #0b1220;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      text-align: center;
+      background: #111827;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 400px;
+    }
+
+    button {
+      padding: 15px;
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      background: #ef4444;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+    }
+
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-around;
+      background: rgba(17, 24, 39, 0.95);
+      padding: 12px 0;
+    }
+
+    .nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="nav">
+  <a href="index.html">🏠</a>
+  <a href="dashboard.html">📊</a>
+  <a href="report.html">🚨</a>
+  <a href="about.html">ℹ️</a>
+</div>
+
+<div class="card">
+  <h2>🚨 Emergency Alert</h2>
+  <button onclick="sendReport()">SEND ALERT</button>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { getFirestore, collection, addDoc } 
@@ -12,22 +83,17 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// IMPORTANT FIX: make sure function is globally available
 window.sendReport = async function () {
-  try {
-    console.log("Sending report...");
+  await addDoc(collection(db, "reports"), {
+    user: "Anonymous",
+    time: new Date().toLocaleString(),
+    location: "School",
+    status: "ACTIVE"
+  });
 
-    await addDoc(collection(db, "reports"), {
-      user: "Anonymous",
-      time: new Date().toLocaleString(),
-      location: "School",
-      status: "ACTIVE"
-    });
-
-    alert("🚨 Alert Sent Successfully!");
-  } catch (error) {
-    console.error("Error sending report:", error);
-    alert("Failed: " + error.message);
-  }
+  alert("🚨 Alert Sent!");
 };
 </script>
+
+</body>
+</html>
