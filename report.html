@@ -1,13 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Report</title>
+  <title>Report - BullyWatch</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    body { margin:0; font-family:Arial; background:#0b1220; color:white; display:flex; justify-content:center; align-items:center; height:100vh; }
-    .card { text-align:center; background:#111827; padding:30px; border-radius:15px; width:90%; max-width:400px; }
-    button { width:100%; padding:15px; border:none; border-radius:12px; background:#ef4444; color:white; font-weight:bold; }
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: #0b1220;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .card {
+      text-align: center;
+      background: #111827;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      border: none;
+      border-radius: 12px;
+      background: #ef4444;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #dc2626;
+    }
+
+    .note {
+      margin-top: 10px;
+      font-size: 12px;
+      opacity: 0.7;
+    }
   </style>
 </head>
 
@@ -15,31 +54,65 @@
 
 <div class="card">
   <h2>🚨 Emergency Alert</h2>
+  <p>GPS location will be included (if allowed)</p>
+
   <button onclick="sendReport()">SEND ALERT</button>
+
+  <div class="note">Sends live report to admin dashboard</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
-firebase.initializeApp({
+const firebaseConfig = {
   apiKey: "AIzaSyB_0NmIehy-FLZ-t9FGEemKcH_G1-Z1vgk",
   authDomain: "bullywatch-12ce1.firebaseapp.com",
   projectId: "bullywatch-12ce1"
-});
+};
 
+firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 function sendReport() {
-  db.collection("reports").add({
-    userName: localStorage.getItem("userName") || "Anonymous",
-    email: localStorage.getItem("userEmail") || "",
-    location: "School",
-    time: new Date().toLocaleString(),
-    status: "ACTIVE"
-  });
 
-  alert("🚨 Sent!");
+  const userName = localStorage.getItem("userName") || "Anonymous";
+  const email = localStorage.getItem("userEmail") || "";
+
+  function saveReport(location) {
+    db.collection("reports").add({
+      userName: userName,
+      email: email,
+      location: location,
+      time: new Date().toLocaleString(),
+      timestamp: Date.now(),
+      status: "ACTIVE"
+    });
+
+    alert("🚨 Report Sent!");
+  }
+
+  // 📍 Try GPS first
+  if (navigator.geolocation) {
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+
+        saveReport(`${lat}, ${lng}`);
+      },
+
+      (err) => {
+        // fallback if denied
+        saveReport("Location not available");
+      }
+
+    );
+
+  } else {
+    saveReport("GPS not supported");
+  }
 }
 </script>
 
