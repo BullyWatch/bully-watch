@@ -7,7 +7,7 @@
   <style>
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: Arial;
       background: linear-gradient(135deg, #0f172a, #1e293b);
       display: flex;
       justify-content: center;
@@ -22,13 +22,6 @@
       border-radius: 15px;
       width: 90%;
       max-width: 350px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 0 20px rgba(0,0,0,0.4);
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
     }
 
     input {
@@ -37,45 +30,53 @@
       margin: 8px 0;
       border: none;
       border-radius: 10px;
-      outline: none;
     }
 
     button {
       width: 100%;
       padding: 12px;
-      margin-top: 10px;
       border: none;
       border-radius: 10px;
       background: #3b82f6;
       color: white;
       font-weight: bold;
-      cursor: pointer;
     }
 
-    button:hover {
-      background: #2563eb;
+    .nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-around;
+      background: rgba(17, 24, 39, 0.95);
+      padding: 12px 0;
     }
 
-    .small {
-      text-align: center;
-      margin-top: 10px;
-      font-size: 12px;
-      opacity: 0.7;
+    .nav a {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
     }
   </style>
 </head>
 
 <body>
 
+<div class="nav">
+  <a href="index.html">🏠</a>
+  <a href="dashboard.html">📊</a>
+  <a href="report.html">🚨</a>
+  <a href="about.html">ℹ️</a>
+</div>
+
 <div class="card">
-  <h2>🔐 BullyWatch Login</h2>
+  <h2>🔐 Login</h2>
 
   <input id="user" placeholder="Email">
   <input id="pass" type="password" placeholder="Password">
 
   <button onclick="login()">Login</button>
-
-  <div class="small">Secure Firebase Authentication</div>
 </div>
 
 <script type="module">
@@ -93,13 +94,8 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 window.login = function () {
-  const email = user.value;
-  const password = pass.value;
-
-  signInWithEmailAndPassword(auth, email, password)
-    .then(() => {
-      window.location.href = "./dashboard.html";
-    })
+  signInWithEmailAndPassword(auth, user.value, pass.value)
+    .then(() => window.location.href = "./dashboard.html")
     .catch(err => alert(err.message));
 };
 </script>
