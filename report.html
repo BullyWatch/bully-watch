@@ -61,7 +61,7 @@
   <a href="index.html">🏠</a>
   <a href="dashboard.html">📊</a>
   <a href="report.html">🚨</a>
-  <a href="about.html">ℹ️</a>
+  <a href="profile.html">👤</a>
 </div>
 
 <div class="card">
@@ -84,7 +84,7 @@ const db = firebase.firestore();
 
 function sendReport() {
   db.collection("reports").add({
-    user: localStorage.getItem("userEmail") || "Anonymous",
+    user: localStorage.getItem("userName") || "Anonymous",
     time: new Date().toLocaleString(),
     location: "School",
     status: "ACTIVE"
