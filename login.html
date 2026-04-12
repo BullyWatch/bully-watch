@@ -1,27 +1,114 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Login</title>
+  <title>Login Your Account</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    body { margin:0; font-family:Arial; background:#0f172a; color:white; display:flex; justify-content:center; align-items:center; height:100vh; }
-    .card { background:#111827; padding:25px; border-radius:15px; width:90%; max-width:350px; }
-    input, button { width:100%; padding:12px; margin:8px 0; border:none; border-radius:10px; }
-    button { background:#3b82f6; color:white; font-weight:bold; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #6366f1, #22d3ee, #3b82f6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: white;
+    }
+
+    .card {
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(12px);
+      padding: 30px 25px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 360px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: none;
+      border-radius: 12px;
+      outline: none;
+      background: rgba(255,255,255,0.9);
+      color: #1e293b;
+      font-size: 14px;
+    }
+
+    input::placeholder {
+      color: #64748b;
+    }
+
+    button {
+      width: 100%;
+      padding: 13px;
+      margin-top: 10px;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #3b82f6, #2563eb);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      transform: scale(1.05);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+
+    .small {
+      margin-top: 10px;
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    .nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+      background: rgba(15, 23, 42, 0.8);
+      backdrop-filter: blur(12px);
+    }
+
+    .nav a {
+      color: #e2e8f0;
+      text-decoration: none;
+      font-size: 18px;
+    }
   </style>
 </head>
 
 <body>
 
-<div class="card">
-  <h2>Login</h2>
+<div class="nav">
+  <a href="index.html">🏠</a>
+  <a href="dashboard.html">📊</a>
+  <a href="report.html">🚨</a>
+  <a href="profile.html">👤</a>
+</div>
 
-  <input id="name" placeholder="Your Name (Evan Burger)">
+<div class="card">
+  <h2> Welcome Back!</h2>
+
+  <input id="name" placeholder="Your Name (e.g. Evan Burger)">
   <input id="email" placeholder="Email">
   <input id="pass" type="password" placeholder="Password">
 
   <button onclick="login()">Login</button>
+
+  <div class="small">Your name will be shown in reports</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
@@ -48,9 +135,7 @@ function login() {
   if (!name) return alert("Enter your name");
 
   auth.signInWithEmailAndPassword(email, pass)
-    .then((cred) => {
-
-      // SAVE USER IN FIRESTORE (REAL SYSTEM)
+    .then(() => {
       db.collection("users").doc(email).set({
         userName: name,
         email: email
