@@ -92,7 +92,7 @@ db.collection("reports").onSnapshot(snapshot => {
 
     feed.innerHTML += `
       <div class="card">
-        🚨 ${r.user}<br>
+        🚨 <b>${r.user}</b><br>
         📍 ${r.location}<br>
         🕒 ${r.time}
       </div>
