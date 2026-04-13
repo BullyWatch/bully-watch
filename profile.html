@@ -1,29 +1,102 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Profile</title>
+  <title>Profile - BullyWatch</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    body { margin:0; font-family:Arial; background:#0b1220; color:white; display:flex; justify-content:center; align-items:center; height:100vh; }
-    .card { background:#111827; padding:25px; border-radius:15px; width:90%; max-width:350px; text-align:center; }
-    input, button { width:100%; padding:12px; margin:8px 0; border:none; border-radius:10px; }
-    button { background:#3b82f6; color:white; font-weight:bold; }
-    .danger { background:#ef4444; }
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: white;
+      height: 100vh;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+    }
+
+    .title {
+      font-weight: bold;
+    }
+
+    .profile-icon {
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: calc(100vh - 60px);
+    }
+
+    .card {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(12px);
+      padding: 25px;
+      border-radius: 18px;
+      width: 90%;
+      max-width: 360px;
+      text-align: center;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 12px;
+      outline: none;
+      background: rgba(255,255,255,0.9);
+      color: #0f172a;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 8px;
+      border: none;
+      border-radius: 12px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .save { background: #3b82f6; color: white; }
+    .danger { background: #ef4444; color: white; }
+
+    .email {
+      font-size: 13px;
+      opacity: 0.7;
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 
 <body>
 
-<div class="card">
-  <h2>👤 Profile</h2>
+<div class="topbar">
+  <div class="title">👤 Profile</div>
+  <div class="profile-icon" onclick="window.location.href='dashboard.html'">📊</div>
+</div>
 
-  <input id="name" placeholder="Your Name">
+<div class="container">
+  <div class="card">
+    <div class="email" id="email"></div>
 
-  <p id="email"></p>
+    <input id="name" placeholder="Your Name">
 
-  <button onclick="save()">Save Name</button>
-  <button class="danger" onclick="logout()">Logout</button>
+    <button class="save" onclick="save()">Save Name</button>
+    <button class="danger" onclick="logout()">Logout</button>
+  </div>
 </div>
 
 <script>
@@ -31,7 +104,9 @@ document.getElementById("name").value = localStorage.getItem("userName") || "";
 document.getElementById("email").innerText = localStorage.getItem("userEmail") || "";
 
 function save() {
-  localStorage.setItem("userName", document.getElementById("name").value);
+  const name = document.getElementById("name").value.trim();
+  if (!name) return alert("Enter a name");
+  localStorage.setItem("userName", name);
   alert("Saved!");
 }
 
