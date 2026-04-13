@@ -17,18 +17,30 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 15px 20px;
+      padding: 12px 16px;
       background: rgba(255,255,255,0.05);
       backdrop-filter: blur(10px);
     }
 
-    .title {
+    .left {
       font-weight: bold;
+      cursor: pointer;
     }
 
-    .profile-icon {
-      font-size: 20px;
-      cursor: pointer;
+    .right {
+      display: flex;
+      gap: 18px;
+      font-size: 14px;
+    }
+
+    .right a {
+      color: white;
+      text-decoration: none;
+      opacity: 0.85;
+    }
+
+    .right a:hover {
+      opacity: 1;
     }
 
     .container {
@@ -46,7 +58,6 @@
       width: 90%;
       max-width: 360px;
       text-align: center;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
 
     input {
@@ -56,8 +67,6 @@
       border: none;
       border-radius: 12px;
       outline: none;
-      background: rgba(255,255,255,0.9);
-      color: #0f172a;
     }
 
     button {
@@ -84,8 +93,15 @@
 <body>
 
 <div class="topbar">
-  <div class="title">👤 Profile</div>
-  <div class="profile-icon" onclick="window.location.href='dashboard.html'">📊</div>
+  <div class="left" onclick="window.location.href='profile.html'">
+    👤 Profile
+  </div>
+
+  <div class="right">
+    <a href="index.html">🏠 Home</a>
+    <a href="dashboard.html">📊 Dashboard</a>
+    <a href="report.html">🚨 Report</a>
+  </div>
 </div>
 
 <div class="container">
