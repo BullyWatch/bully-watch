@@ -15,14 +15,12 @@
     header {
       padding: 18px;
       text-align: center;
-      font-weight: bold;
       background: rgba(255,255,255,0.05);
       backdrop-filter: blur(10px);
     }
 
     .container {
       padding: 10px;
-      padding-bottom: 80px;
     }
 
     .card {
@@ -36,7 +34,6 @@
 
     .title {
       font-weight: bold;
-      margin-bottom: 5px;
     }
 
     .time {
@@ -47,19 +44,18 @@
 
     .empty {
       text-align: center;
-      opacity: 0.6;
       margin-top: 40px;
+      opacity: 0.6;
     }
 
     .nav {
       position: fixed;
       bottom: 0;
-      left: 0;
-      right: 0;
+      width: 100%;
       display: flex;
       justify-content: space-around;
       padding: 12px 0;
-      background: rgba(15, 23, 42, 0.9);
+      background: rgba(15, 23, 42, 0.8);
       backdrop-filter: blur(12px);
     }
 
@@ -73,7 +69,7 @@
 
 <body>
 
-<header>📊 Live Reports Dashboard</header>
+<header>📊 Live Reports</header>
 
 <div class="container" id="feed"></div>
 
@@ -99,7 +95,8 @@ const db = firebase.firestore();
 
 const feed = document.getElementById("feed");
 
-db.collection("reports").orderBy("timestamp", "desc")
+db.collection("reports")
+  .orderBy("timestamp", "desc")
   .onSnapshot(snapshot => {
 
     feed.innerHTML = "";
@@ -109,16 +106,14 @@ db.collection("reports").orderBy("timestamp", "desc")
       return;
     }
 
-    let count = snapshot.size;
-
     snapshot.forEach(doc => {
       const r = doc.data();
 
       feed.innerHTML += `
         <div class="card">
-          <div class="title">🚨 Report #${count--}</div>
+          <div class="title">🚨 ${r.reportID || "Report"}</div>
           📍 ${r.location || "No location"}<br>
-          <div class="time">🕒 ${r.time || "No time"}</div>
+          <div class="time">🕒 ${r.time || ""}</div>
         </div>
       `;
     });
