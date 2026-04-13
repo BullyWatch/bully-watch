@@ -10,10 +10,44 @@
       font-family: Arial, sans-serif;
       background: linear-gradient(135deg, #6366f1, #22d3ee, #3b82f6);
       color: white;
+      height: 100vh;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(10px);
+    }
+
+    .left {
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .right {
+      display: flex;
+      gap: 18px;
+      font-size: 14px;
+    }
+
+    .right a {
+      color: #e2e8f0;
+      text-decoration: none;
+      opacity: 0.85;
+    }
+
+    .right a:hover {
+      opacity: 1;
+    }
+
+    .container {
+      height: calc(100vh - 60px);
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
     }
 
     .card {
@@ -57,53 +91,31 @@
 
     .btn:hover {
       transform: scale(1.05);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
-
-    .nav {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      display: flex;
-      justify-content: space-around;
-      padding: 12px 0;
-
-      background: rgba(15, 23, 42, 0.8);
-      backdrop-filter: blur(12px);
-      border-top: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .nav a {
-      color: #e2e8f0;
-      text-decoration: none;
-      font-size: 18px;
-      transition: 0.2s;
-    }
-
-    .nav a:hover {
-      transform: scale(1.2);
-      color: white;
-    }
-
   </style>
 </head>
 
 <body>
 
-<!-- NAV -->
-<div class="nav">
-  <a href="index.html">🏠</a>
-  <a href="dashboard.html">📊</a>
-  <a href="report.html">🚨</a>
-  <a href="profile.html">👤</a>
+<div class="topbar">
+  <div class="left" onclick="window.location.href='profile.html'">
+    👤 Profile
+  </div>
+
+  <div class="right">
+    <a href="index.html">🏠 Home</a>
+    <a href="dashboard.html">📊 Dashboard</a>
+    <a href="report.html">🚨 Report</a>
+  </div>
 </div>
 
-<div class="card">
-  <h1> BullyWatch</h1>
-  <p>Making schools safer</p>
+<div class="container">
+  <div class="card">
+    <h1>🛡 BullyWatch</h1>
+    <p>Making schools safer</p>
 
-  <a class="btn" href="login.html">Get Started</a>
+    <a class="btn" href="login.html">Get Started</a>
+  </div>
 </div>
 
 </body>
