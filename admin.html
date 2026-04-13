@@ -23,12 +23,11 @@
 
     .left {
       font-weight: bold;
-      cursor: pointer;
     }
 
     .right {
       display: flex;
-      gap: 18px;
+      gap: 14px;
       font-size: 14px;
     }
 
@@ -78,7 +77,6 @@
       border-radius: 16px;
       background: rgba(255,255,255,0.06);
       backdrop-filter: blur(12px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
 
     .status {
@@ -112,14 +110,12 @@
 <body>
 
 <div class="topbar">
-  <div class="left" onclick="window.location.href='profile.html'">
-    👤 Admin Panel
-  </div>
+  <div class="left">👤 Admin Panel</div>
 
   <div class="right">
-    <a href="index.html">🏠 Home</a>
-    <a href="dashboard.html">📊 Dashboard</a>
-    <a href="report.html">🚨 Report</a>
+    <a href="index.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="report.html">Report</a>
   </div>
 </div>
 
@@ -131,7 +127,6 @@
 
 <div class="controls">
   <input id="search" placeholder="Search user..." oninput="render()" />
-  
   <select id="filter" onchange="render()">
     <option value="ALL">All</option>
     <option value="ACTIVE">Active</option>
@@ -159,7 +154,7 @@ const db = firebase.firestore();
 const admins = [
   "ranesesjv@gmail.com",
   "felizce.f@gmail.com",
-  "joisybsedano@gmail.com"
+  "joisybsedano@gmail.com",
   "cocoaolate@gmail.com"
 ];
 
@@ -169,15 +164,22 @@ if (!admins.includes(localStorage.getItem("userEmail"))) {
 
 let reports = [];
 let firstLoad = true;
+let audioUnlocked = false;
 
 const notifySound = document.getElementById("notifySound");
 
-document.body.addEventListener("click", () => {
+function unlockAudio() {
+  if (audioUnlocked) return;
+
   notifySound.play().then(() => {
     notifySound.pause();
     notifySound.currentTime = 0;
+    audioUnlocked = true;
   }).catch(() => {});
-}, { once: true });
+}
+
+document.body.addEventListener("click", unlockAudio, { once: true });
+document.body.addEventListener("touchstart", unlockAudio, { once: true });
 
 db.collection("reports").onSnapshot(snapshot => {
 
@@ -189,8 +191,12 @@ db.collection("reports").onSnapshot(snapshot => {
 
   const changes = snapshot.docChanges();
 
-  if (!firstLoad && changes.some(c => c.type === "added")) {
-    notifySound.play().catch(() => {});
+  if (!firstLoad) {
+    const hasNew = changes.some(c => c.type === "added");
+    if (hasNew && audioUnlocked) {
+      notifySound.currentTime = 0;
+      notifySound.play().catch(() => {});
+    }
   }
 
   firstLoad = false;
@@ -227,9 +233,8 @@ function render() {
   feed.innerHTML = "";
 
   let filtered = reports.filter(r => {
-    const matchName = r.userName.toLowerCase().includes(search);
-    const matchStatus = filter === "ALL" ? true : r.status === filter;
-    return matchName && matchStatus;
+    return r.userName.toLowerCase().includes(search) &&
+      (filter === "ALL" || r.status === filter);
   });
 
   if (filtered.length === 0) {
@@ -275,4 +280,4 @@ function removeReport(id) {
 </script>
 
 </body>
-</html>
+  </html>
