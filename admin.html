@@ -139,6 +139,7 @@ db.collection("reports").onSnapshot(snapshot => {
 
     reports.push({
       id: doc.id,
+      reportID: r.reportID || "No ID",
       userName: r.userName || r.user || "Unknown",
       location: r.location || "No location",
       time: r.time || "No time",
@@ -182,7 +183,8 @@ function render() {
 
     feed.innerHTML += `
       <div class="card">
-        👤 <b>${r.userName}</b><br>
+        🚨 <b>${r.reportID}</b><br>
+        👤 ${r.userName}<br>
         📍 ${r.location}<br>
         🕒 ${r.time}<br>
 
