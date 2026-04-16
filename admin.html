@@ -21,9 +21,7 @@
       backdrop-filter: blur(10px);
     }
 
-    .left {
-      font-weight: bold;
-    }
+    .left { font-weight: bold; }
 
     .right {
       display: flex;
@@ -37,10 +35,6 @@
       opacity: 0.85;
     }
 
-    .right a:hover {
-      opacity: 1;
-    }
-
     .stats {
       display: flex;
       justify-content: space-around;
@@ -48,7 +42,6 @@
       margin: 10px;
       border-radius: 12px;
       background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(10px);
     }
 
     .controls {
@@ -67,22 +60,23 @@
       color: white;
     }
 
-    #feed {
-      padding-bottom: 40px;
-    }
-
     .card {
       margin: 12px;
       padding: 15px;
       border-radius: 16px;
       background: rgba(255,255,255,0.06);
-      backdrop-filter: blur(12px);
     }
 
     .status {
       font-size: 12px;
       opacity: 0.8;
       margin-top: 6px;
+    }
+
+    .extra {
+      font-size: 13px;
+      margin-top: 6px;
+      opacity: 0.9;
     }
 
     button {
@@ -210,7 +204,10 @@ db.collection("reports").onSnapshot(snapshot => {
       userName: r.userName || "Unknown",
       location: r.location || "No location",
       time: r.time || "No time",
-      status: r.status || "ACTIVE"
+      status: r.status || "ACTIVE",
+      type: r.type || "GENERAL",
+      note: r.note || "",
+      forOther: r.forOther || false
     });
 
     total++;
@@ -244,16 +241,21 @@ function render() {
 
   filtered.forEach(r => {
 
-    const map = r.location.includes(",")
-      ? `https://www.google.com/maps?q=${r.location}`
-      : null;
+    const hasCoords = r.location.includes(",") && !r.location.toLowerCase().includes("online");
+    const map = hasCoords ? `https://www.google.com/maps?q=${r.location}` : null;
 
     feed.innerHTML += `
       <div class="card">
         🚨 <b>${r.reportID}</b><br>
         👤 ${r.userName}<br>
+        📌 ${r.type}<br>
         📍 ${r.location}<br>
         🕒 ${r.time}<br>
+
+        <div class="extra">
+          📝 ${r.note || "No details"}<br>
+          👥 ${r.forOther ? "Reported for someone else" : "Self report"}
+        </div>
 
         <div class="status">⚡ ${r.status}</div>
 
@@ -280,4 +282,4 @@ function removeReport(id) {
 </script>
 
 </body>
-  </html>
+</html>
