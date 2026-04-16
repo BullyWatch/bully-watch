@@ -11,6 +11,7 @@
       background: linear-gradient(135deg, #6366f1, #22d3ee, #3b82f6);
       color: white;
       height: 100vh;
+      overflow: hidden;
     }
 
     .topbar {
@@ -21,22 +22,6 @@
       backdrop-filter: blur(10px);
     }
 
-    .left {
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .right {
-      display: flex;
-      gap: 18px;
-      font-size: 14px;
-    }
-
-    .right a {
-      color: #e2e8f0;
-      text-decoration: none;
-    }
-
     .container {
       height: calc(100vh - 60px);
       display: flex;
@@ -44,16 +29,6 @@
       align-items: center;
       flex-direction: column;
       gap: 15px;
-    }
-
-    .card {
-      text-align: center;
-      background: rgba(255,255,255,0.15);
-      backdrop-filter: blur(12px);
-      padding: 30px;
-      border-radius: 20px;
-      width: 90%;
-      max-width: 360px;
     }
 
     .panic {
@@ -70,26 +45,29 @@
       box-shadow: 0 0 40px rgba(255,0,0,0.4);
     }
 
-    .panic:active {
-      transform: scale(0.95);
-    }
-
     .more {
       font-size: 13px;
-      opacity: 0.9;
       cursor: pointer;
       text-decoration: underline;
+      opacity: 0.9;
+    }
+
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.65);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
     }
 
     .modal {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      width: 90%;
+      max-width: 380px;
       background: #111827;
       padding: 20px;
-      border-radius: 20px 20px 0 0;
-      display: none;
+      border-radius: 16px;
     }
 
     input, select {
@@ -116,10 +94,10 @@
       bottom: 20px;
       right: 20px;
       background: #111827;
-      color: white;
       padding: 12px 14px;
       border-radius: 50px;
       text-decoration: none;
+      color: white;
     }
   </style>
 </head>
@@ -127,42 +105,39 @@
 <body>
 
 <div class="topbar">
-  <div class="left" onclick="location.href='profile.html'">👤</div>
-
-  <div class="right">
-    <a href="index.html">🏠</a>
-    <a href="dashboard.html">📊</a>
-    <a href="report.html">🚨</a>
+  <div onclick="location.href='profile.html'">👤</div>
+  <div>
+    <a href="index.html" style="color:white;margin-right:10px;">🏠</a>
+    <a href="dashboard.html" style="color:white;margin-right:10px;">📊</a>
+    <a href="report.html" style="color:white;">🚨</a>
   </div>
 </div>
 
 <div class="container">
-  <div class="panic" onclick="quickReport()">
-    🚨 TAP TO ALERT
-  </div>
-
-  <div class="more" onclick="openModal()">
-    More options
-  </div>
+  <div class="panic" onclick="quickReport()">🚨 ALERT</div>
+  <div class="more" onclick="openModal()">More options</div>
 </div>
 
-<!-- MODAL -->
-<div class="modal" id="modal">
-  <h3>Detailed Report</h3>
+<div class="overlay" id="overlay" onclick="closeModal()">
+  <div class="modal" onclick="event.stopPropagation()">
+    <h3>Detailed Report</h3>
 
-  <select id="type">
-    <option value="PHYSICAL">Physical</option>
-    <option value="CYBER">Cyberbullying</option>
-  </select>
+    <select id="type" onchange="togglePin()">
+      <option value="PHYSICAL">Physical</option>
+      <option value="CYBER">Cyberbullying</option>
+    </select>
 
-  <input id="note" placeholder="What happened? (optional)">
+    <input id="note" placeholder="What happened?">
 
-  <label style="font-size:13px;">
-    <input type="checkbox" id="other">
-    Reporting for someone else
-  </label>
+    <label>
+      <input type="checkbox" id="other" onchange="togglePin()">
+      Reporting for someone else
+    </label>
 
-  <button onclick="detailedReport()">Send Detailed Report</button>
+    <input id="manualLocation" placeholder="Pin location (optional)" style="display:none;">
+
+    <button onclick="detailedReport()">Send Report</button>
+  </div>
 </div>
 
 <a class="admin-btn" href="admin.html">🛡</a>
@@ -171,13 +146,12 @@
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
-const firebaseConfig = {
+firebase.initializeApp({
   apiKey: "AIzaSyB_0NmIehy-FLZ-t9FGEemKcH_G1-Z1vgk",
   authDomain: "bullywatch-12ce1.firebaseapp.com",
   projectId: "bullywatch-12ce1"
-};
+});
 
-firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 function generateReportID() {
@@ -185,7 +159,19 @@ function generateReportID() {
   return `${n.getMonth()+1}${n.getDate()}-${n.getHours()}${n.getMinutes()}`;
 }
 
-/* 🔴 FAST PANIC REPORT */
+function openModal() {
+  document.getElementById("overlay").style.display = "flex";
+}
+
+function closeModal() {
+  document.getElementById("overlay").style.display = "none";
+}
+
+function togglePin() {
+  const show = document.getElementById("other").checked;
+  document.getElementById("manualLocation").style.display = show ? "block" : "none";
+}
+
 function quickReport() {
   const userName = localStorage.getItem("userName") || "Anonymous";
 
@@ -200,21 +186,16 @@ function quickReport() {
       type: "EMERGENCY"
     });
 
-    alert("🚨 Emergency Sent!");
+    alert("Sent!");
   });
 }
 
-/* ⚙️ MODAL */
-function openModal() {
-  document.getElementById("modal").style.display = "block";
-}
-
-/* 🧾 DETAILED REPORT */
 function detailedReport() {
+  const userName = localStorage.getItem("userName") || "Anonymous";
   const type = document.getElementById("type").value;
   const note = document.getElementById("note").value;
   const other = document.getElementById("other").checked;
-  const userName = localStorage.getItem("userName") || "Anonymous";
+  const manual = document.getElementById("manualLocation").value;
 
   function save(location) {
     db.collection("reports").add({
@@ -230,17 +211,23 @@ function detailedReport() {
     });
 
     alert("Report Sent!");
+    closeModal();
   }
 
   if (type === "CYBER") {
     save("Online / Cyberbullying");
   } else {
-    navigator.geolocation.getCurrentPosition(pos => {
-      save(`${pos.coords.latitude}, ${pos.coords.longitude}`);
-    });
+    if (other && manual) {
+      save(manual);
+    } else {
+      navigator.geolocation.getCurrentPosition(
+        pos => save(`${pos.coords.latitude}, ${pos.coords.longitude}`),
+        () => save("Location not available")
+      );
+    }
   }
 }
 </script>
 
 </body>
-  </html>
+</html>
