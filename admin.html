@@ -21,20 +21,6 @@
       backdrop-filter: blur(10px);
     }
 
-    .left { font-weight: bold; }
-
-    .right {
-      display: flex;
-      gap: 14px;
-      font-size: 14px;
-    }
-
-    .right a {
-      color: #e2e8f0;
-      text-decoration: none;
-      opacity: 0.85;
-    }
-
     .stats {
       display: flex;
       justify-content: space-around;
@@ -58,6 +44,7 @@
       border: none;
       background: rgba(255,255,255,0.1);
       color: white;
+      outline: none;
     }
 
     .card {
@@ -65,6 +52,7 @@
       padding: 15px;
       border-radius: 16px;
       background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(10px);
     }
 
     .status {
@@ -77,11 +65,12 @@
       font-size: 13px;
       margin-top: 6px;
       opacity: 0.9;
+      line-height: 1.4;
     }
 
     button {
       margin-top: 8px;
-      padding: 8px;
+      padding: 8px 10px;
       border: none;
       border-radius: 8px;
       font-weight: bold;
@@ -104,13 +93,7 @@
 <body>
 
 <div class="topbar">
-  <div class="left">👤 Admin Panel</div>
-
-  <div class="right">
-    <a href="index.html">Home</a>
-    <a href="dashboard.html">Dashboard</a>
-    <a href="report.html">Report</a>
-  </div>
+  <div>🛡 Admin Panel</div>
 </div>
 
 <div class="stats">
@@ -120,7 +103,7 @@
 </div>
 
 <div class="controls">
-  <input id="search" placeholder="Search user..." oninput="render()" />
+  <input id="search" placeholder="Search user..." oninput="render()">
   <select id="filter" onchange="render()">
     <option value="ALL">All</option>
     <option value="ACTIVE">Active</option>
@@ -130,97 +113,57 @@
 
 <div id="feed"></div>
 
-<audio id="notifySound" src="notification.mp3" preload="auto"></audio>
-
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
 <script>
-const firebaseConfig = {
+firebase.initializeApp({
   apiKey: "AIzaSyB_0NmIehy-FLZ-t9FGEemKcH_G1-Z1vgk",
   authDomain: "bullywatch-12ce1.firebaseapp.com",
   projectId: "bullywatch-12ce1"
-};
+});
 
-firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-const admins = [
-  "ranesesjv@gmail.com",
-  "felizce.f@gmail.com",
-  "joisybsedano@gmail.com",
-  "cocoaolate@gmail.com"
-];
-
-if (!admins.includes(localStorage.getItem("userEmail"))) {
-  document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>Access Denied</h2>";
-}
-
 let reports = [];
-let firstLoad = true;
-let audioUnlocked = false;
 
-const notifySound = document.getElementById("notifySound");
+db.collection("reports")
+  .orderBy("timestamp", "desc")
+  .onSnapshot(snapshot => {
 
-function unlockAudio() {
-  if (audioUnlocked) return;
+    reports = [];
 
-  notifySound.play().then(() => {
-    notifySound.pause();
-    notifySound.currentTime = 0;
-    audioUnlocked = true;
-  }).catch(() => {});
-}
+    let total = 0;
+    let active = 0;
+    let resolved = 0;
 
-document.body.addEventListener("click", unlockAudio, { once: true });
-document.body.addEventListener("touchstart", unlockAudio, { once: true });
+    snapshot.forEach(doc => {
+      const r = doc.data();
 
-db.collection("reports").onSnapshot(snapshot => {
+      reports.push({
+        id: doc.id,
+        reportID: r.reportID || "No ID",
+        userName: r.userName || "Unknown",
+        email: r.email || "",
+        location: r.location || "No location",
+        time: r.time || "No time",
+        status: r.status || "ACTIVE",
+        type: r.type || "GENERAL",
+        note: r.note || "",
+        forOther: r.forOther || false
+      });
 
-  reports = [];
-
-  let total = 0;
-  let active = 0;
-  let resolved = 0;
-
-  const changes = snapshot.docChanges();
-
-  if (!firstLoad) {
-    const hasNew = changes.some(c => c.type === "added");
-    if (hasNew && audioUnlocked) {
-      notifySound.currentTime = 0;
-      notifySound.play().catch(() => {});
-    }
-  }
-
-  firstLoad = false;
-
-  snapshot.forEach(doc => {
-    const r = doc.data();
-
-    reports.push({
-      id: doc.id,
-      reportID: r.reportID || "No ID",
-      userName: r.userName || "Unknown",
-      location: r.location || "No location",
-      time: r.time || "No time",
-      status: r.status || "ACTIVE",
-      type: r.type || "GENERAL",
-      note: r.note || "",
-      forOther: r.forOther || false
+      total++;
+      if (r.status === "RESOLVED") resolved++;
+      else active++;
     });
 
-    total++;
-    if (r.status === "RESOLVED") resolved++;
-    else active++;
+    document.getElementById("total").innerText = total;
+    document.getElementById("active").innerText = active;
+    document.getElementById("resolved").innerText = resolved;
+
+    render();
   });
-
-  document.getElementById("total").innerText = total;
-  document.getElementById("active").innerText = active;
-  document.getElementById("resolved").innerText = resolved;
-
-  render();
-});
 
 function render() {
   const feed = document.getElementById("feed");
@@ -241,13 +184,14 @@ function render() {
 
   filtered.forEach(r => {
 
-    const hasCoords = r.location.includes(",") && !r.location.toLowerCase().includes("online");
-    const map = hasCoords ? `https://www.google.com/maps?q=${r.location}` : null;
+    const isCoords = r.location.includes(",") && !r.location.includes("Online");
+    const map = isCoords ? `https://www.google.com/maps?q=${r.location}` : null;
 
     feed.innerHTML += `
       <div class="card">
         🚨 <b>${r.reportID}</b><br>
         👤 ${r.userName}<br>
+        📧 ${r.email}<br>
         📌 ${r.type}<br>
         📍 ${r.location}<br>
         🕒 ${r.time}<br>
@@ -259,24 +203,26 @@ function render() {
 
         <div class="status">⚡ ${r.status}</div>
 
-        ${map ? `<a href="${map}" target="_blank">
-          <button class="map">Open Map</button>
-        </a>` : ""}
+        ${map ? `
+          <a href="${map}" target="_blank">
+            <button class="map">Open Map</button>
+          </a>
+        ` : ""}
 
-        <button class="resolve" onclick="resolve('${r.id}')">Resolve</button>
-        <button class="delete" onclick="removeReport('${r.id}')">Delete</button>
+        <button class="resolve" onclick="resolveReport('${r.id}')">Resolve</button>
+        <button class="delete" onclick="deleteReport('${r.id}')">Delete</button>
       </div>
     `;
   });
 }
 
-function resolve(id) {
+function resolveReport(id) {
   db.collection("reports").doc(id).update({
     status: "RESOLVED"
   });
 }
 
-function removeReport(id) {
+function deleteReport(id) {
   db.collection("reports").doc(id).delete();
 }
 </script>
