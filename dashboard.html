@@ -35,11 +35,6 @@
     .right a {
       color: #e2e8f0;
       text-decoration: none;
-      opacity: 0.85;
-    }
-
-    .right a:hover {
-      opacity: 1;
     }
 
     .container {
@@ -57,12 +52,28 @@
 
     .title {
       font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .meta {
+      font-size: 13px;
+      opacity: 0.9;
+      line-height: 1.5;
     }
 
     .time {
       font-size: 12px;
       opacity: 0.7;
-      margin-top: 5px;
+      margin-top: 6px;
+    }
+
+    .tag {
+      display: inline-block;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 10px;
+      margin-top: 6px;
+      background: rgba(59,130,246,0.3);
     }
 
     .empty {
@@ -70,20 +81,26 @@
       margin-top: 40px;
       opacity: 0.6;
     }
+
+    a.map {
+      display: inline-block;
+      margin-top: 8px;
+      color: #60a5fa;
+      font-size: 12px;
+      text-decoration: underline;
+    }
   </style>
 </head>
 
 <body>
 
 <div class="topbar">
-  <div class="left" onclick="window.location.href='profile.html'">
-    👤 Profile
-  </div>
+  <div class="left" onclick="location.href='profile.html'">👤 Profile</div>
 
   <div class="right">
-    <a href="index.html">🏠 Home</a>
-    <a href="dashboard.html">📊 Dashboard</a>
-    <a href="report.html">🚨 Report</a>
+    <a href="index.html">🏠</a>
+    <a href="dashboard.html">📊</a>
+    <a href="report.html">🚨</a>
   </div>
 </div>
 
@@ -118,11 +135,23 @@ db.collection("reports")
     snapshot.forEach(doc => {
       const r = doc.data();
 
+      const isCoords = r.location && r.location.includes(",");
+      const mapLink = isCoords ? `https://www.google.com/maps?q=${r.location}` : null;
+
       feed.innerHTML += `
         <div class="card">
           <div class="title">🚨 ${r.reportID || "Report"}</div>
-          📍 ${r.location || "No location"}<br>
+
+          <div class="meta">
+            📌 ${r.type || "GENERAL"}<br>
+            📍 ${r.location || "No location"}<br>
+            🧠 ${r.note || "No details"}<br>
+            👥 ${r.forOther ? "Reported for someone else" : "Self report"}
+          </div>
+
           <div class="time">🕒 ${r.time || ""}</div>
+
+          ${mapLink ? `<a class="map" href="${mapLink}" target="_blank">Open in Maps</a>` : ""}
         </div>
       `;
     });
