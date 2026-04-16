@@ -15,10 +15,8 @@
     .topbar {
       display: flex;
       justify-content: space-between;
-      align-items: center;
       padding: 12px 16px;
       background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(10px);
     }
 
     .stats {
@@ -44,7 +42,6 @@
       border: none;
       background: rgba(255,255,255,0.1);
       color: white;
-      outline: none;
     }
 
     .card {
@@ -52,25 +49,29 @@
       padding: 15px;
       border-radius: 16px;
       background: rgba(255,255,255,0.06);
-      backdrop-filter: blur(10px);
+      transition: 0.2s;
     }
 
-    .status {
-      font-size: 12px;
-      opacity: 0.8;
-      margin-top: 6px;
+    .card.new {
+      border: 2px solid #ef4444;
+      box-shadow: 0 0 15px rgba(239,68,68,0.5);
     }
 
-    .extra {
-      font-size: 13px;
-      margin-top: 6px;
-      opacity: 0.9;
-      line-height: 1.4;
+    .tag {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-top: 4px;
     }
+
+    .emergency { background: #ef4444; }
+    .cyber { background: #8b5cf6; }
+    .physical { background: #3b82f6; }
 
     button {
       margin-top: 8px;
-      padding: 8px 10px;
+      padding: 8px;
       border: none;
       border-radius: 8px;
       font-weight: bold;
@@ -78,14 +79,14 @@
       margin-right: 6px;
     }
 
-    .resolve { background: #22c55e; color: white; }
-    .delete { background: #ef4444; color: white; }
-    .map { background: #3b82f6; color: white; }
+    .resolve { background: #22c55e; }
+    .delete { background: #ef4444; }
+    .map { background: #3b82f6; }
 
-    .empty {
-      text-align: center;
-      opacity: 0.6;
-      margin-top: 40px;
+    .status {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-top: 6px;
     }
   </style>
 </head>
@@ -113,6 +114,8 @@
 
 <div id="feed"></div>
 
+<audio id="sound" src="notification.mp3" preload="auto"></audio>
+
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
@@ -125,45 +128,76 @@ firebase.initializeApp({
 
 const db = firebase.firestore();
 
+const admins = [
+  "ranesesjv@gmail.com",
+  "felizce.f@gmail.com",
+  "joisybsedano@gmail.com",
+  "cocoaolate@gmail.com"
+];
+
+if (!admins.includes(localStorage.getItem("userEmail"))) {
+  document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>Access Denied</h2>";
+}
+
 let reports = [];
+let firstLoad = true;
+
+const sound = document.getElementById("sound");
+
+document.body.addEventListener("click", () => {
+  sound.play().then(() => {
+    sound.pause();
+    sound.currentTime = 0;
+  }).catch(()=>{});
+}, { once: true });
 
 db.collection("reports")
-  .orderBy("timestamp", "desc")
-  .onSnapshot(snapshot => {
+.orderBy("timestamp", "desc")
+.onSnapshot(snapshot => {
 
-    reports = [];
+  const changes = snapshot.docChanges();
 
-    let total = 0;
-    let active = 0;
-    let resolved = 0;
+  if (!firstLoad) {
+    const hasNew = changes.some(c => c.type === "added");
+    if (hasNew) {
+      sound.currentTime = 0;
+      sound.play().catch(()=>{});
+    }
+  }
 
-    snapshot.forEach(doc => {
-      const r = doc.data();
+  firstLoad = false;
 
-      reports.push({
-        id: doc.id,
-        reportID: r.reportID || "No ID",
-        userName: r.userName || "Unknown",
-        email: r.email || "",
-        location: r.location || "No location",
-        time: r.time || "No time",
-        status: r.status || "ACTIVE",
-        type: r.type || "GENERAL",
-        note: r.note || "",
-        forOther: r.forOther || false
-      });
+  reports = [];
 
-      total++;
-      if (r.status === "RESOLVED") resolved++;
-      else active++;
+  let total = 0, active = 0, resolved = 0;
+
+  snapshot.forEach(doc => {
+    const r = doc.data();
+
+    reports.push({
+      id: doc.id,
+      reportID: r.reportID || "No ID",
+      userName: r.userName || "Unknown",
+      email: r.email || "",
+      location: r.location || "",
+      time: r.time || "",
+      status: r.status || "ACTIVE",
+      type: r.type || "GENERAL",
+      note: r.note || "",
+      forOther: r.forOther || false,
+      timestamp: r.timestamp || 0
     });
 
-    document.getElementById("total").innerText = total;
-    document.getElementById("active").innerText = active;
-    document.getElementById("resolved").innerText = resolved;
-
-    render();
+    total++;
+    r.status === "RESOLVED" ? resolved++ : active++;
   });
+
+  document.getElementById("total").innerText = total;
+  document.getElementById("active").innerText = active;
+  document.getElementById("resolved").innerText = resolved;
+
+  render();
+});
 
 function render() {
   const feed = document.getElementById("feed");
@@ -172,42 +206,43 @@ function render() {
 
   feed.innerHTML = "";
 
-  let filtered = reports.filter(r => {
-    return r.userName.toLowerCase().includes(search) &&
-      (filter === "ALL" || r.status === filter);
-  });
+  reports
+  .filter(r => r.userName.toLowerCase().includes(search) &&
+    (filter === "ALL" || r.status === filter))
+  .forEach(r => {
 
-  if (filtered.length === 0) {
-    feed.innerHTML = "<div class='empty'>No reports found</div>";
-    return;
-  }
+    const isNew = Date.now() - r.timestamp < 10000;
 
-  filtered.forEach(r => {
+    const tagClass =
+      r.type === "EMERGENCY" ? "emergency" :
+      r.type === "CYBER" ? "cyber" :
+      "physical";
 
-    const isCoords = r.location.includes(",") && !r.location.includes("Online");
-    const map = isCoords ? `https://www.google.com/maps?q=${r.location}` : null;
+    const map = r.location.includes(",")
+      ? `https://www.google.com/maps?q=${r.location}`
+      : null;
 
     feed.innerHTML += `
-      <div class="card">
+      <div class="card ${isNew ? "new" : ""}">
         🚨 <b>${r.reportID}</b><br>
         👤 ${r.userName}<br>
         📧 ${r.email}<br>
-        📌 ${r.type}<br>
-        📍 ${r.location}<br>
-        🕒 ${r.time}<br>
 
-        <div class="extra">
-          📝 ${r.note || "No details"}<br>
-          👥 ${r.forOther ? "Reported for someone else" : "Self report"}
-        </div>
+        <span class="tag ${tagClass}">${r.type}</span><br>
+
+        📍 ${r.location}<br>
+        🕒 ${r.time}
 
         <div class="status">⚡ ${r.status}</div>
 
-        ${map ? `
-          <a href="${map}" target="_blank">
-            <button class="map">Open Map</button>
-          </a>
-        ` : ""}
+        <div style="margin-top:6px;font-size:13px;">
+          📝 ${r.note || "No details"}<br>
+          👥 ${r.forOther ? "For someone else" : "Self"}
+        </div>
+
+        ${map ? `<a href="${map}" target="_blank">
+          <button class="map">Open Map</button>
+        </a>` : ""}
 
         <button class="resolve" onclick="resolveReport('${r.id}')">Resolve</button>
         <button class="delete" onclick="deleteReport('${r.id}')">Delete</button>
@@ -217,9 +252,7 @@ function render() {
 }
 
 function resolveReport(id) {
-  db.collection("reports").doc(id).update({
-    status: "RESOLVED"
-  });
+  db.collection("reports").doc(id).update({ status: "RESOLVED" });
 }
 
 function deleteReport(id) {
