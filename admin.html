@@ -17,6 +17,7 @@
       justify-content: space-between;
       padding: 12px 16px;
       background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
     }
 
     .stats {
@@ -35,6 +36,242 @@
       justify-content: center;
       flex-wrap: wrap;
     }
+
+    input, select {
+      padding: 10px;
+      border-radius: 10px;
+      border: none;
+      background: rgba(255,255,255,0.1);
+      color: white;
+      outline: none;
+    }
+
+    .card {
+      margin: 12px;
+      padding: 15px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.06);
+      transition: 0.2s;
+    }
+
+    .card.new {
+      border: 2px solid #ef4444;
+      box-shadow: 0 0 12px rgba(239,68,68,0.5);
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 4px 8px;
+      border-radius: 8px;
+      display: inline-block;
+      margin-top: 4px;
+    }
+
+    .emergency { background: #ef4444; }
+    .cyber { background: #8b5cf6; }
+    .physical { background: #3b82f6; }
+
+    button {
+      margin-top: 8px;
+      padding: 8px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-right: 6px;
+    }
+
+    .resolve { background: #22c55e; }
+    .delete { background: #ef4444; }
+    .map { background: #3b82f6; }
+
+    .status {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="topbar">
+  <div>🛡 Admin Panel</div>
+</div>
+
+<div class="stats">
+  <div>🚨 <span id="total">0</span></div>
+  <div>🟢 <span id="active">0</span></div>
+  <div>✅ <span id="resolved">0</span></div>
+</div>
+
+<div class="controls">
+  <input id="search" placeholder="Search user..." oninput="render()">
+  <select id="filter" onchange="render()">
+    <option value="ALL">All</option>
+    <option value="ACTIVE">Active</option>
+    <option value="RESOLVED">Resolved</option>
+  </select>
+</div>
+
+<div id="feed"></div>
+
+<audio id="sound" src="notification.mp3" preload="auto"></audio>
+
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+  apiKey: "AIzaSyB_0NmIehy-FLZ-t9FGEemKcH_G1-Z1vgk",
+  authDomain: "bullywatch-12ce1.firebaseapp.com",
+  projectId: "bullywatch-12ce1"
+});
+
+const db = firebase.firestore();
+
+const admins = [
+  "ranesesjv@gmail.com",
+  "felizce.f@gmail.com",
+  "joisybsedano@gmail.com",
+  "cocoaolate@gmail.com",
+  "jnenglatera@pshs.edu.ph"
+];
+
+if (!admins.includes(localStorage.getItem("userEmail"))) {
+  document.body.innerHTML = "<h2 style='text-align:center;margin-top:50px;'>Access Denied</h2>";
+}
+
+let reports = [];
+let lastIDs = new Set();
+
+const sound = document.getElementById("sound");
+
+document.body.addEventListener("click", () => {
+  sound.play().then(() => {
+    sound.pause();
+    sound.currentTime = 0;
+  }).catch(()=>{});
+}, { once: true });
+
+function playSoundSafe() {
+  sound.currentTime = 0;
+  sound.play().catch(()=>{});
+}
+
+db.collection("reports")
+.orderBy("timestamp", "desc")
+.onSnapshot(snapshot => {
+
+  let newDetected = false;
+  const currentIDs = new Set();
+
+  reports = [];
+  let total = 0, active = 0, resolved = 0;
+
+  snapshot.forEach(doc => {
+    const r = doc.data();
+    currentIDs.add(doc.id);
+
+    if (!lastIDs.has(doc.id)) {
+      newDetected = true;
+    }
+
+    reports.push({
+      id: doc.id,
+      reportID: r.reportID || "No ID",
+      userName: r.userName || "Unknown",
+      email: r.email || "",
+      location: r.location || "",
+      time: r.time || "",
+      status: r.status || "ACTIVE",
+      type: r.type || "GENERAL",
+      note: r.note || "",
+      forOther: r.forOther || false,
+      timestamp: r.timestamp || 0
+    });
+
+    total++;
+    r.status === "RESOLVED" ? resolved++ : active++;
+  });
+
+  lastIDs = currentIDs;
+
+  document.getElementById("total").innerText = total;
+  document.getElementById("active").innerText = active;
+  document.getElementById("resolved").innerText = resolved;
+
+  if (newDetected) playSoundSafe();
+
+  render();
+});
+
+function render() {
+  const feed = document.getElementById("feed");
+  const search = document.getElementById("search").value.toLowerCase();
+  const filter = document.getElementById("filter").value;
+
+  feed.innerHTML = "";
+
+  reports
+  .filter(r =>
+    r.userName.toLowerCase().includes(search) &&
+    (filter === "ALL" || r.status === filter)
+  )
+  .forEach(r => {
+
+    const isNew = Date.now() - r.timestamp < 15000;
+
+    const tagClass =
+      r.type === "EMERGENCY" ? "emergency" :
+      r.type === "CYBER" ? "cyber" :
+      "physical";
+
+    const safeLocation = r.location || "";
+    const map = safeLocation.includes(",")
+      ? `https://www.google.com/maps?q=${encodeURIComponent(safeLocation)}`
+      : null;
+
+    feed.innerHTML += `
+      <div class="card ${isNew ? "new" : ""}">
+        🚨 <b>${r.reportID}</b><br>
+        👤 ${r.userName}<br>
+        📧 ${r.email}<br>
+
+        <span class="tag ${tagClass}">${r.type}</span><br>
+
+        📍 ${r.location}<br>
+        🕒 ${r.time}<br>
+
+        <div class="status">⚡ ${r.status}</div>
+
+        <div style="margin-top:6px;font-size:13px;">
+          📝 ${r.note || "No details"}<br>
+          👥 ${r.forOther ? "For someone else" : "Self report"}
+        </div>
+
+        ${map ? `<a href="${map}" target="_blank">
+          <button class="map">Open Map</button>
+        </a>` : ""}
+
+        <button class="resolve" onclick="resolveReport('${r.id}')">Resolve</button>
+        <button class="delete" onclick="deleteReport('${r.id}')">Delete</button>
+      </div>
+    `;
+  });
+}
+
+function resolveReport(id) {
+  db.collection("reports").doc(id).update({ status: "RESOLVED" });
+}
+
+function deleteReport(id) {
+  db.collection("reports").doc(id).delete();
+}
+</script>
+
+</body>
+</html>    }
 
     input, select {
       padding: 10px;
